@@ -1,0 +1,41 @@
+<h1>Kysymykset</h1>
+<b>Aihealue:</b> {{ subject.name }}
+<hr>
+
+<b>Lisää uusi kysymys:</b> <br>
+<form action="/questions/add" method="POST">
+    <input type="hidden" value="/subjects/{{subject.id}}/questions" name="path" />
+    <input type="hidden" value="{{subject.id}}" name="subject_id" />
+    <p>
+    Kysymys:
+    <p>
+    <textarea name="question" rows="2" cols="30"></textarea>
+    <p>
+    Vastaus:
+    <input type="text" name="answer">
+    <p>
+    Pisteet:
+    <input type="number" name="points">
+    <p>
+    <input type="submit" value="Lähetä">
+</form>
+<hr>
+
+{% for question in questions %}
+<p>
+<b>Kysymys:</b> <br>
+<p>
+{{ question.question }} 
+<p> 
+<b>Vastaus: </b> {{ question.answer }}
+<p>
+<b>Pisteet: </b> {{ question.points }}
+<p>
+    <form action="/questions/delete" method="POST">
+        <input type="hidden" value="/subjects/{{subject.id}}/questions" name="path" />
+        <input type="hidden" value="{{question.id}}" name="question_id" />
+        <input type="submit" value="Poista"/>
+    </form>
+</p>
+<hr>
+{% endfor %}

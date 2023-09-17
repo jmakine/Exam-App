@@ -1,0 +1,20 @@
+<h1>Koe Sovellus</h1>
+
+{% if session.user_id %}
+Hei {% if session.role == "student" %}
+<a>opiskelija <i>{{ user.username }}</i> !</a> <br> <br>
+<a href="/subjects">Aihealueet</a>
+{% endif %}
+
+{% if session.role == "teacher" %} 
+<a>opettaja <i>{{ user.username }}</i> !</a> <br> <br>
+<a href="/subjects">Aihealueet</a> | <a href="/users">Käyttäjät</a> <br><br> 
+{% endif %}
+
+<hr>
+<a href="/logout">Kirjaudu ulos</a>
+
+{% else %}
+<a href="/login">Kirjaudu sisään</a> <br>
+<a href="/register">Luo tunnus</a>
+{% endif %}

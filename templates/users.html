@@ -1,0 +1,34 @@
+<h1>Käyttäjät</h1>
+<hr>
+
+<form action="/users/add" method="POST">
+    <h3>Lisää käyttäjä:</h3>
+    <b>Nimi: </b><input type="text" name="username"> <br> <br>
+    <b>Salasana: </b><input type="password" name="password"> <br> <br>
+    <b>Rooli: </b>
+    <select name="role">
+        <option value="student">Oppilas</option>
+        <option value="teacher">Opettaja</option>
+    </select> <br> <br>
+    <input type="submit" value="Lisää"> <br>
+</form>
+<hr>
+
+{% for user in users %}
+<b>Nimi:</b> {{ user.username }} <br>
+<b>Rooli:</b> 
+    {% if user.role == "student" %}
+        <a>Oppilas</a>
+    {% endif %}
+    {% if user.role == "teacher" %} 
+        <a>Opettaja</a> 
+    {% endif %} <br>
+
+<p>
+    <form action="/users/delete" method="POST">
+        <input type="hidden" value="{{user.id}}" name="id" />
+        <input type="submit" value="Poista"/>
+    </form>
+</p>
+<hr>
+{% endfor %}

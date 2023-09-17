@@ -1,0 +1,33 @@
+<h2>{{ exam.name }}</h2>
+<p> <b>Aikaraja: </b> {{ exam.time_limit_minutes }} minuuttia
+<p> <b>Koekysymyksiä: </b> {% if total_points.total_points==None %} 0 {% else %} {{ questions_count }} {% endif %}
+<p> <b>Kokonaispisteet: </b> _ / {% if total_points.total_points==None %} 0 {% else %} {{ total_points.total_points }} {% endif %}
+
+<hr>
+<h3>Koe kysymykset:</h3>
+
+{% if total_points.total_points==None %}
+<hr>
+{% else %}
+{% for question in exams_questions %}
+<p><b>Kysymys: </b> {{ question.question }}
+<p>
+    <form action="exam/answer_question" method="POST">
+        <input type="hidden" value="{{exam.exam_id}}" name="exam_id" />
+        <input type="hidden" value="{{question.question_id}}" name="question_id" />
+        <b>Vastaus: </b><input type="text" name="answer">
+        <p><input type="submit" value="Vastaa (älä paina, ei toimi vielä)"/>
+    </form>
+</p>
+<p>Pisteet: _ / {{question.points}}
+<hr>
+{% endfor %}
+{% endif %}
+
+<p>
+    <form action="exam/submit" method="POST">
+        <input type="hidden" value="/" name="path" />
+        <input type="hidden" value="{{exam.exam_id}}" name="exam_id" />
+        <input type="submit" value="Lähetä vastaukset (älä paina, ei toimi vielä)">
+    </form>
+</p>

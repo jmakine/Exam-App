@@ -1,0 +1,42 @@
+<h1>Kokeet</h1>
+<b>Aihealue:</b> {{ subject.name }}
+<hr>
+
+{% if session.role == "teacher" %}
+<b>Luo uusi koe:</b> <br>
+<form action="/exams/add" method="POST">
+    <input type="hidden" value="/subjects/{{subject.id}}/exams" name="path" />
+    <input type="hidden" value="{{subject.id}}" name="subject_id" />
+    
+    <p> Anna kokeelle nimi:
+    <input type="text" name="name">
+    <p> Aikaraja (minuuttia):
+    <input type="number" name="timelimit">
+    <p>
+    <input type="submit" value="Lisää">
+</form>
+<hr>
+{% endif %}
+
+{% for exam in exams %}
+<h2>{{ exam.exam_name }}</h2>
+<p> <b>Aikaraja: </b> {{ exam.time_limit_minutes }} minuuttia
+<p> <b>Kysymyksiä: </b> {{ exam.total_questions}}
+<p> <b>Maksimipisteet: </b> {{exam.max_points}}
+
+{% if session.role == "student" %}
+<p> <a href="/exams/{{exam.exam_id}}" style="border: red;"><b>Suorita koe</b></a>
+{% endif %}
+
+{% if session.role == "teacher" %}
+<p> <a href="/exams/{{exam.exam_id}}">Muokkaa</a>
+<p>
+    <form action="/exams/delete" method="POST">
+        <input type="hidden" value="/subjects/{{subject.id}}/exams" name="path" />
+        <input type="hidden" value="{{exam.exam_id}}" name="exam_id" />
+        <input type="submit" value="Poista"/>
+    </form>
+</p>
+{% endif %}
+<hr>
+{% endfor %}

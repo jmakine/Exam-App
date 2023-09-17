@@ -1,0 +1,26 @@
+<h1>Aihealueet</h1>
+<hr>
+
+{% if session.role == "teacher" %}
+<form action="/subjects/add" method="POST">
+    <h3>Lisää aihealue:</h3>
+    <input type="text" name="name"> <br> <br>
+    <input type="submit" value="Lisää">
+</form>
+<hr>
+{% endif %}
+
+{% for subject in subjects %}
+<h2> {{ subject.name }} </h2>
+<a href="/subjects/{{subject.id}}/exams"> Kokeet </a> <br>
+{% if session.role == "teacher" %}
+<a href="/subjects/{{subject.id}}/questions"> Kysymykset </a> <br>
+<p>
+    <form action="/subjects/delete" method="POST">
+        <input type="hidden" value="{{subject.id}}" name="id" />
+        <input type="submit" value="Poista"/>
+    </form>
+</p>
+{% endif %}
+<hr>
+{% endfor %}
