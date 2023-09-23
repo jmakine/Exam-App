@@ -1,9 +1,11 @@
 from app import app
 from flask import render_template, request, redirect
+from datetime import datetime
 import users
 import subjects
 import questions
 import exams
+import answers
 
 @app.route("/")
 def index():
@@ -169,7 +171,7 @@ def delete_exam():
 @app.route("/exams/<int:exam_id>")
 def get_exam(exam_id):
     exam=exams.get_exam(exam_id)
-    total_points = exams.exams_total_points(exam_id)
+    max_points = exams.exams_total_points(exam_id)
     exams_questions=exams.get_exam_questions_and_answers(exam_id)
 
     if users.user_role() == 'teacher':
@@ -179,13 +181,31 @@ def get_exam(exam_id):
                             exams_questions=exams_questions, 
                             available_questions=available_questions, 
                             questions_count=len(exams_questions), 
-                            total_points=total_points)
+                            max_points=max_points.total_points)
     else:
+        exam_started = exams.start_exam(exam_id)
+        user_id = users.user_id()
+        exam_finished = exams.get_timestamp_finished(exam_id, user_id)
+        answered_questions = answers.submitted_answers(exam_id, user_id)
+        answered_question_ids = []
+        for item in answered_questions:
+            answered_question_ids.append(item.question_id)
+        answered_question_points_received = []
+        for item in answered_questions:
+            answered_question_points_received.append(item.points_received)
+
         return render_template("perform_exam.html",
                             exam=exam, 
+                            exam_finished=exam_finished,
                             exams_questions=exams_questions, 
                             questions_count=len(exams_questions), 
-                            total_points=total_points)
+                            max_points=max_points.total_points,
+                            exam_started=exam_started,
+                            answers=answered_questions,
+                            answered_question_ids=answered_question_ids,
+                            answered_questions_count=len(answered_questions),
+                            total_points_received=sum(answered_question_points_received),
+                            user_id=user_id)
 
 @app.route("/exam/add_question", methods=["POST"])
 def add_exam_question():
@@ -210,9 +230,26 @@ def remove_exam_question():
         redirect("/")
 
 @app.route("/exam/answer_question", methods=["POST"])
-def add_users_answer():
-    return ''
+def submit_answer():
+    if users.user_role() == 'student':
+        path=request.form["path"]
+        exam_id=request.form["exam_id"]
+        question_id=request.form["question_id"]
+        answer=request.form["answer"]
+        answers.answer_question(question_id, exam_id, answer)
+        return redirect(path)
+    else:
+        redirect("/")
 
 @app.route("/exam/submit", methods=["POST"])
-def submit_users_exam():
-    return ''
+def submit_exam():
+    if users.user_role() == 'student':
+        user_id = users.user_id()
+        path=request.form["path"]
+        exam_id=request.form["exam_id"]
+        total_score=request.form["total_score"]
+        exam_finished = datetime.now()
+        exams.end_exam(user_id, exam_id, total_score, exam_finished)
+        return redirect(path)
+    else:
+        redirect("/")
