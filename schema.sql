@@ -33,11 +33,19 @@ CREATE TABLE exams_questions (
     exam_id INTEGER REFERENCES exams ON DELETE CASCADE
 );
 
+CREATE TABLE users_exams (
+    id SERIAL PRIMARY KEY,
+    exam_id INTEGER REFERENCES exams ON DELETE CASCADE,
+    user_id INTEGER REFERENCES users ON DELETE CASCADE,
+    exam_started TIMESTAMP,
+    exam_finished TIMESTAMP,
+    total_score INTEGER
+);
+
 CREATE TABLE users_answers (
     id SERIAL PRIMARY KEY,
     exams_question_id INTEGER REFERENCES exams_questions ON DELETE CASCADE,
-    user_id INTEGER REFERENCES users ON DELETE CASCADE,
+    user_exam_id INTEGER REFERENCES users_exams ON DELETE CASCADE,
     points_received INTEGER,
-    answer TEXT,
-    exam_finished TIMESTAMP
-)
+    answer TEXT
+);
