@@ -1,5 +1,6 @@
 from db import db
 from sqlalchemy.sql import text
+import users
 
 def get_exams(subject_id):
     sql = "SELECT subject_exams.subject_id, subject_exams.subject_name, subject_exams.exam_id, subject_exams.exam_name, subject_exams.time_limit_minutes, exam_summary.total_questions, exam_summary.max_points \
@@ -10,8 +11,6 @@ def get_exams(subject_id):
                     LEFT JOIN questions q ON q.id=eq.question_id GROUP BY e.id) as exam_summary \
             ON subject_exams.exam_id=exam_summary.exam_id"
     return db.session.execute(text(sql), {"subject_id":subject_id}).fetchall()
-
-# SELECT first_set.subject_id, first_set.subject_name, first_set.exam_id, first_set.exam_name, first_set.time_limit_minutes, second_set.total_questions, second_set.max_points FROM (SELECT s.id as subject_id, s.name as subject_name, e.id as exam_id, e.name as exam_name, e.time_limit_minutes FROM exams e, subjects s WHERE e.subject_id=1 AND s.id=1) as first_set INNER JOIN (SELECT e.id as exam_id, COUNT(eq.question_id) as total_questions, SUM(q.points) as max_points FROM exams e LEFT JOIN exams_questions eq ON e.id=eq.exam_id LEFT JOIN questions q ON q.id=eq.question_id GROUP BY e.id) as second_set ON first_set.exam_id=second_set.exam_id;
 
 def get_exam(exam_id):
     sql = "SELECT e.subject_id, e.id as exam_id, e.name, e.time_limit_minutes \
@@ -85,6 +84,50 @@ def remove_question(exam_id, question_id):
         sql = "DELETE FROM exams_questions eq\
             WHERE eq.exam_id=:exam_id AND eq.question_id=:question_id"
         db.session.execute(text(sql), {"exam_id":exam_id, "question_id":question_id})
+        db.session.commit()
+    except:
+        return False
+
+def get_timestamp_started(exam_id, user_id):
+    sql = "SELECT exam_started from users_exams \
+        WHERE (user_id, exam_id) = (:user_id, :exam_id)"
+    timestamp = db.session.execute(text(sql), {"exam_id":exam_id, "user_id":user_id}).fetchone()
+    exam_started = timestamp[0].strftime("%c")
+    return exam_started
+
+def start_exam(exam_id):
+    user_id = users.user_id()
+    try:
+        sql = "INSERT INTO users_exams (user_id, exam_id, exam_started) \
+            SELECT :user_id, :exam_id, current_timestamp \
+            WHERE NOT EXISTS ( \
+                SELECT 1 FROM users_exams WHERE (user_id, exam_id) = (:user_id, :exam_id) \
+            )"
+        db.session.execute(text(sql), {"exam_id":exam_id, "user_id":user_id})
+        db.session.commit()
+        exam_started = get_timestamp_started(exam_id, user_id)
+        return exam_started
+    except:
+        return False
+
+def get_timestamp_finished(exam_id, user_id):
+    sql = "SELECT exam_finished from users_exams \
+        WHERE (user_id, exam_id) = (:user_id, :exam_id)"
+    exam_finished = db.session.execute(text(sql), {"exam_id":exam_id, "user_id":user_id}).fetchone()
+    exam_finished = exam_finished[0]
+    if exam_finished != None:
+        exam_finished = exam_finished.strftime("%c")
+    return exam_finished
+
+def end_exam(user_id, exam_id, total_score, exam_finished):
+    try:
+        sql = "UPDATE users_exams \
+            SET exam_finished = (CASE WHEN b.count=0 THEN current_timestamp ELSE exam_finished END), \
+                total_score = (CASE WHEN b.count=0 THEN :total_score ELSE total_score END) \
+            FROM (SELECT COUNT(*) as count FROM users_exams WHERE exam_id=:exam_id AND user_id=:user_id AND exam_finished IS NOT NULL) b \
+            WHERE user_id=:user_id AND exam_id=:exam_id"
+
+        db.session.execute(text(sql), {"exam_id":exam_id, "user_id":user_id, "total_score":total_score, "exam_finished":exam_finished})
         db.session.commit()
     except:
         return False
