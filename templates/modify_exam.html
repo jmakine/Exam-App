@@ -1,12 +1,12 @@
 <h2>{{ exam.name }}</h2>
 <p> <b>Aikaraja: </b> {{ exam.time_limit_minutes }} minuuttia
-<p> <b>Koekysymyksiä: </b> {% if total_points.total_points==None %} 0 {% else %} {{ questions_count }} {% endif %}
-<p> <b>Kokonaispisteet: </b> {% if total_points.total_points==None %} 0 {% else %} {{ total_points.total_points }} {% endif %}
+<p> <b>Koekysymyksiä: </b> {% if max_points==None %} 0 {% else %} {{ questions_count }} {% endif %}
+<p> <b>Kokonaispisteet: </b> {% if max_points==None %} 0 {% else %} {{ max_points }} {% endif %}
 
 <hr>
 <h3>Koe kysymykset:</h3>
 
-{% if total_points.total_points==None %}
+{% if max_points==None %}
 <hr>
 {% else %}
 {% for question in exams_questions %}
