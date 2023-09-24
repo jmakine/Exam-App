@@ -88,6 +88,20 @@ def remove_question(exam_id, question_id):
     except:
         return False
 
+def get_exam_stats():
+    try:
+        sql = "SELECT u.id as user_id, u.username, s.name as subject_name, e.id as exam_id, e.name as exam_name, exams_total_points.total_points as max_points, TO_CHAR(ue.exam_finished, 'YYYY/MM/DD HH24:MM:SS') as exam_finished, ue.total_score as points_received \
+            FROM users u LEFT JOIN users_exams ue ON ue.user_id=u.id \
+                LEFT JOIN exams e ON e.id=ue.exam_id \
+                    INNER JOIN subjects s ON s.id=e.subject_id \
+                        LEFT JOIN (SELECT e.id as exam_id, SUM(q.points) as total_points \
+                            FROM exams e LEFT JOIN exams_questions eq ON e.id=eq.exam_id \
+                                LEFT JOIN questions q ON q.id=eq.question_id GROUP BY e.id) as exams_total_points \
+                                    ON exams_total_points.exam_id=e.id"
+        return db.session.execute(text(sql)).fetchall()
+    except:
+        return False
+
 def get_timestamp_started(exam_id, user_id):
     sql = "SELECT exam_started from users_exams \
         WHERE (user_id, exam_id) = (:user_id, :exam_id)"
@@ -101,8 +115,7 @@ def start_exam(exam_id):
         sql = "INSERT INTO users_exams (user_id, exam_id, exam_started) \
             SELECT :user_id, :exam_id, current_timestamp \
             WHERE NOT EXISTS ( \
-                SELECT 1 FROM users_exams WHERE (user_id, exam_id) = (:user_id, :exam_id) \
-            )"
+                SELECT 1 FROM users_exams WHERE (user_id, exam_id) = (:user_id, :exam_id))"
         db.session.execute(text(sql), {"exam_id":exam_id, "user_id":user_id})
         db.session.commit()
         exam_started = get_timestamp_started(exam_id, user_id)
@@ -126,7 +139,6 @@ def end_exam(user_id, exam_id, total_score, exam_finished):
                 total_score = (CASE WHEN b.count=0 THEN :total_score ELSE total_score END) \
             FROM (SELECT COUNT(*) as count FROM users_exams WHERE exam_id=:exam_id AND user_id=:user_id AND exam_finished IS NOT NULL) b \
             WHERE user_id=:user_id AND exam_id=:exam_id"
-
         db.session.execute(text(sql), {"exam_id":exam_id, "user_id":user_id, "total_score":total_score, "exam_finished":exam_finished})
         db.session.commit()
     except:
