@@ -1,4 +1,7 @@
-<h1>Aihealueet</h1>
+{% extends "layout.html" %}
+{% block title %} Aihealueet {% endblock %}
+{% block content %}
+<h2>Aihealueet</h2>
 <hr>
 
 {% if session.role == "teacher" %}
@@ -11,16 +14,17 @@
 {% endif %}
 
 {% for subject in subjects %}
-<h2> {{ subject.name }} </h2>
+<h3> {{ subject.name }} </h3>
 <a href="/subjects/{{subject.id}}/exams"> Kokeet </a> <br>
 {% if session.role == "teacher" %}
 <a href="/subjects/{{subject.id}}/questions"> Kysymykset </a> <br>
 <p>
     <form action="/subjects/delete" method="POST">
         <input type="hidden" value="{{subject.id}}" name="id" />
-        <input type="submit" value="Poista"/>
+        <input type="submit" value="Poista" onclick="return confirm('Aihealueen poistaminen poistaa sen myös kaikista tilastoista sekä siihen liittyvät kokeet ja kysymykset. Haluatko varmasti poistaa aihealueen?');"/>
     </form>
 </p>
 {% endif %}
 <hr>
 {% endfor %}
+{% endblock %}
