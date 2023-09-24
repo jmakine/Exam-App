@@ -69,7 +69,7 @@ def username_exists(username):
     return username_exists != []
 
 def login(username, password):
-    sql = "SELECT id, password, role FROM users WHERE username=:username"
+    sql = "SELECT id, password, role, username FROM users WHERE username=:username"
     result = db.session.execute(text(sql), {"username":username})
     user = result.fetchone()
     if not user:
@@ -78,6 +78,7 @@ def login(username, password):
         if check_password_hash(user.password, password):
             session["user_id"] = user.id
             session["role"] = user.role
+            session["username"] = user.username
             return True
         else:
             return False
@@ -85,6 +86,7 @@ def login(username, password):
 def logout():
     del session["user_id"]
     del session["role"]
+    del session["username"]
 
 def user_id():
     return session.get("user_id",0)
