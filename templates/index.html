@@ -1,20 +1,37 @@
-<h1>Koe Sovellus</h1>
+{% extends "layout.html" %}
+{% block title %} Etusivu {% endblock %}
+{% block content %}
 
 {% if session.user_id %}
-Hei {% if session.role == "student" %}
-<a>opiskelija <i>{{ user.username }}</i> !</a> <br> <br>
-<a href="/subjects">Aihealueet</a>
-{% endif %}
+    <h2>Etusivu</h2>
+    {% if session.role == "student" %}
+    <p>Voit suorittaa eriaihealueen kokeita ja katsoa suorituksesi. </p>
+    {% endif %}
 
-{% if session.role == "teacher" %} 
-<a>opettaja <i>{{ user.username }}</i> !</a> <br> <br>
-<a href="/subjects">Aihealueet</a> | <a href="/users">Käyttäjät</a> <br><br> 
-{% endif %}
-
-<hr>
-<a href="/logout">Kirjaudu ulos</a>
+    {% if session.role == "teacher" %} 
+    <p>
+        <ul>
+            <li>
+                <b>Aihealueet</b> -sivulla pystyt luomaan ja poistamaan aihealueta, kokeita ja kysymyksiä sekä lisäämään ja poistamaan kysymyksiä kokeilta.
+            </li>
+            <li>
+                <b>Koetilastot</b> -sivulta näet yhteenvedot kaikista sovelluksen kokeista sekä tulostilastoja.
+            </li>
+            <li>
+                <b>Käyttäjät</b> -sivulla pääset lisäämään ja poistamaan käyttäjiä.
+            </li>
+            <li>
+                <b>Käyttäjätilastot</b> -sivulta näet käyttäjäkohtaiset suoritukset.
+            </li>
+        </ul>
+    </p>
+    {% endif %}
 
 {% else %}
-<a href="/login">Kirjaudu sisään</a> <br>
-<a href="/register">Luo tunnus</a>
+    <p>
+        Sovelluksessa opettaja voi luoda kokeita ja opiskelija voi suorittaa niitä. <br>
+        <b>Kirjaudu sisään tai luo tunnus.</b>
+    </p>
 {% endif %}
+
+{% endblock %}
