@@ -1,22 +1,21 @@
-<h1>Kysymykset</h1>
+{% extends "layout.html" %}
+{% block title %} Kysymykset {% endblock %}
+{% block content %}
+<h2>Kysymykset</h2>
 <b>Aihealue:</b> {{ subject.name }}
 <hr>
 
-<b>Lisää uusi kysymys:</b> <br>
+{% if session.role == "teacher" %}
+<h3>Lisää uusi kysymys:</h3>
 <form action="/questions/add" method="POST">
     <input type="hidden" value="/subjects/{{subject.id}}/questions" name="path" />
     <input type="hidden" value="{{subject.id}}" name="subject_id" />
-    <p>
-    Kysymys:
-    <p>
-    <textarea name="question" rows="2" cols="30"></textarea>
-    <p>
-    Vastaus:
-    <input type="text" name="answer">
-    <p>
-    Pisteet:
-    <input type="number" name="points">
-    <p>
+    <b> Kysymys: </b> <br>
+    <textarea name="question" rows="2" cols="30"></textarea> <br>
+    <b> Vastaus: </b> <br>
+    <input type="text" name="answer"> <br>
+    <b> Pisteet: </b> <br>
+    <input type="number" name="points"> <br> <br>
     <input type="submit" value="Lähetä">
 </form>
 <hr>
@@ -34,8 +33,10 @@
     <form action="/questions/delete" method="POST">
         <input type="hidden" value="/subjects/{{subject.id}}/questions" name="path" />
         <input type="hidden" value="{{question.id}}" name="question_id" />
-        <input type="submit" value="Poista"/>
+        <input type="submit" value="Poista" onclick="return confirm('Kysymyksen poistaminen poistaa sen myös kaikista tilastoista, ja vaikuttaa kaikkiin kokeisiin, joissa kysymystä on käytetty. Haluatko varmasti poistaa kysymyksen?');"/>
     </form>
 </p>
 <hr>
 {% endfor %}
+{% endif %}
+{% endblock %}
