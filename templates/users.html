@@ -1,4 +1,7 @@
-<h1>Käyttäjät</h1>
+{% extends "layout.html" %}
+{% block title %} Kirjautuminen {% endblock %}
+{% block content %}
+<h2>Käyttäjät</h2>
 <hr>
 
 <form action="/users/add" method="POST">
@@ -32,3 +35,4 @@
 </p>
 <hr>
 {% endfor %}
+{% endblock %}
