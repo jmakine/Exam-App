@@ -54,6 +54,12 @@ def get_users():
         return render_template("users.html", users=result)
     else: 
         return redirect("/")
+    
+@app.route("/users_table")
+def get_exam_stats():
+    stats_by_user = exams.get_exam_stats()
+    return render_template("users_table.html", 
+                           stats=stats_by_user)
 
 @app.route("/users/add", methods=["POST"])
 def add_user():
@@ -91,7 +97,7 @@ def add_subject():
     if users.user_role() == 'teacher':
         name = request.form["name"]
         if subjects.subjectname_exists(name) == True:
-            return render_template("error.html", message="Aihealue luotu jo")
+            return render_template("error.html", message="Tämän niminen aihealue on jo olemassa")
         else:
             subjects.add_subject(name)    
             return redirect("/subjects")
@@ -141,7 +147,31 @@ def delete_question():
 def get_exams(subject_id):
     subject = subjects.get_subject(subject_id)
     subject_exams = exams.get_exams(subject_id)
-    return render_template("exams.html", subject=subject, exams=subject_exams)
+    user_id = users.user_id()
+    users_completed_exams = answers.get_exams_and_points(user_id)
+    completed_exam_ids = []
+    for exam in users_completed_exams:
+        completed_exam_ids.append(exam.exam_id)
+    return render_template("exams.html", subject=subject, exams=subject_exams, completed_exam_ids=completed_exam_ids)
+
+@app.route("/exams")
+def get_all_exams():
+    all_exams = answers.get_all_exams_and_points()
+    user_id = users.user_id()
+    user = answers.get_exams_and_points(user_id)
+    started_exam_ids = []
+    for exam in user:
+        if exam.exam_finished == None and exam.exam_started != None :
+            started_exam_ids.append(exam.exam_id)
+    submitted_exam_ids = []
+    for exam in user:
+        if exam.exam_finished != None:
+            submitted_exam_ids.append(exam.exam_id)
+    return render_template("exams_table.html", 
+                           exams=all_exams, 
+                           users_points=user, 
+                           submitted_exam_ids=submitted_exam_ids,
+                           started_exam_ids=started_exam_ids)
 
 @app.route("/exams/add", methods=["POST"])
 def add_exam():
@@ -151,7 +181,7 @@ def add_exam():
         name=request.form["name"]
         timelimit=request.form["timelimit"]
         if exams.examname_exists(name) == True:
-            return render_template("error.html", message="Tämän niminen koe luotu jo, syötä uniikki nimi")
+            return render_template("error.html", message="Tämän niminen koe on jo olemassa")
         else:
             exams.add_exam(subject_id, name, timelimit)  
             return redirect(path)
