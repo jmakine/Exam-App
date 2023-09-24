@@ -1,0 +1,59 @@
+<!doctype html>
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css" integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x" crossorigin="anonymous">
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.25/css/dataTables.bootstrap5.css">
+
+<title>Koe sovellus - {% block title %}{% endblock %}</title>
+<div class="container">
+<h1>Koe sovellus</h1>
+{% if session.user_id %}
+    Kirjautunut 
+        {% if session.role == "teacher" %} opettaja: <i>{{ session.username }}</i> &nbsp;
+        {% else %} oppilas: <i>{{ session.username }}</i> &nbsp;
+        {% endif %}
+    <a>&nbsp;</a>
+    <a href="/logout">Kirjaudu ulos</a>
+
+    <nav class="navbar navbar-expand-sm navbar-light">
+        <a class="navbar-brand" href="/">Etusivu</a>
+        <ul class="navbar-nav">
+        {% if session.role == "teacher" %}
+        <li class="nav-item">
+            <a class="nav-link" href="/subjects">Aihealueet</a>
+        </li>
+        {% endif %}
+        {% if session.role == "student" %}
+        <li class="nav-item">
+            <a class="nav-link" href="/exams">Kokeet</a>
+        </li>
+        {% endif %}
+        {% if session.role == "teacher" %}
+        <li class="nav-item">
+            <a class="nav-link" href="/exams">Koetilastot</a>
+        </li>
+        {% endif %}
+        {% if session.role == "teacher" %}
+        <li class="nav-item">
+            <a class="nav-link" href="/users">Käyttäjät</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="/users_table">Käyttäjätilastot</a>
+        </li>
+        {% endif %}        
+        </ul>
+    </nav>
+
+{% else %}
+    <a href="/login">Kirjaudu sisään</a> 
+    <a>&nbsp;</a>
+    <a href="/register">Luo tunnus</a>
+{% endif %}
+<hr>
+{% block content %}{% endblock %}
+
+<script type="text/javascript" charset="utf8" src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.js"></script>
+<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.25/js/dataTables.bootstrap5.js"></script>
+{% block scripts %}{% endblock %}
+</div>
