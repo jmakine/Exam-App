@@ -1,0 +1,124 @@
+{% extends "layout.html" %}
+{% block content %}
+<h2>Kokeet</h2>
+
+{% if session.role == "student" %}
+<table id="student_data" class="table table-striped">
+    <thead>
+        <tr>
+            <th>Aihealue</th>
+            <th>Kokeen nimi</th>
+            <th>Kysymyksiä</th>
+            <th>Aikaraja</th>
+            <th>Maksimi pisteet</th>
+            <th>Omat pisteet</th>
+            <th>Katso tulokset</th>
+            <th>Jatka suoritusta</th>
+            <th>Suorita koe</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for exam in exams %}
+        <tr>
+            <td>{{ exam.subject_name }}</td>
+            <td>{{ exam.exam_name }}</td>
+            <td>{{ exam.total_questions }}</td>
+            <td>{{ exam.time_limit_minutes }}</td>
+            <td>{{ exam.max_points }}</td>
+            <td>{% for user in users_points %} 
+                    {% if user.exam_id == exam.exam_id and exam.exam_id in submitted_exam_ids %}
+                    {{ user.points_received }}
+                    {% endif %} 
+                {% endfor %}
+            </td>
+            <td>{% for user in users_points %} 
+                    {% if user.exam_id == exam.exam_id and exam.exam_id in submitted_exam_ids %}
+                    <a href="/exams/{{exam.exam_id}}">Tulokset</a>
+                    {% endif %} 
+                {% endfor %}
+            </td>
+            <td>{% for user in users_points %} 
+                    {% if user.exam_id == exam.exam_id and exam.exam_id in started_exam_ids and exam.exam_id not in submitted_exam_ids %}
+                    <a href="/exams/{{exam.exam_id}}">Jatka</a>
+                    {% endif %}
+                {% endfor %}
+            </td>
+            <td>{% if exam.exam_id not in started_exam_ids and exam.exam_id not in submitted_exam_ids %}
+                <a href="/exams/{{exam.exam_id}}"
+                  onclick="return confirm(`Haluatko varmasti aloittaa kokeen? Painamalla 'ok', kokeen suoritusaika alkaa.`);">
+                  Aloita</a>
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endif %}
+
+{% if session.role == "teacher" %}
+<table id="teacher_data" class="table table-striped">
+    <thead>
+        <tr>
+            <th>Aihealue</th>
+            <th>Kokeen nimi</th>
+            <th>Kysymyksiä</th>
+            <th>Aikaraja</th>
+            <th>Maksimipisteet</th>
+            <th>Suorituksia</th>
+            <th>Keskiarvo</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for exam in exams %}
+        <tr>
+            <td>{{ exam.subject_name }}</td>
+            <td>{{ exam.exam_name }}</td>
+            <td>{{ exam.total_questions }}</td>
+            <td>{{ exam.time_limit_minutes }}</td>
+            <td>{{ exam.max_points }}</td>
+            <td>{% if exam.users_count == None %} -
+                {% else %} {{ exam.users_count }} {% endif %}</td>
+            <td>{% if exam.average_score == None %} -
+                {% else %} {{ exam.average_score }} {% endif %}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endif %}
+
+{% endblock %}
+
+{% block scripts %}
+  <script>
+    $(document).ready(function () {
+      $('#student_data').DataTable({
+        columns: [
+          null,
+          null,
+          {searchable: false},
+          {searchable: false},
+          {searchable: false},
+          {searchable: false},
+          {searchable: false},
+          {searchable: false},
+          {searchable: false}
+        ],
+      });
+    });
+  </script>
+  <script>
+    $(document).ready(function () {
+      $('#teacher_data').DataTable({
+        columns: [
+          null,
+          null,
+          {searchable: false},
+          {searchable: false},
+          {searchable: false},
+          {searchable: false},
+          {searchable: false}
+        ],
+      });
+    });
+  </script>
+{% endblock %}
