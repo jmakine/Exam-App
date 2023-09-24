@@ -1,18 +1,33 @@
-<h2>{{ exam.name }}</h2>
-<p> <b>Aikaraja: </b> {{ exam.time_limit_minutes }} minuuttia
-<p> <i>Koe aloitettu: {{ exam_started }} </i></p>
-{% if exam_finished %}
-    <p> <i>Koe lopetettu: {{ exam_finished}} </i>
+{% extends "layout.html" %}
+{% block title %} Kokeet {% endblock %}
+{% block content %}
+<h2> {{ exam.name }} </h2>
+<b> Aikaraja: </b> {{ exam.time_limit_minutes }} minuuttia <br>
+<i><b> Koe aloitettu: {{ exam_started }} </b></i> <br>
+
+{% if exam_finished == None %}
+<p>
+    <form action="/exam/submit" method="POST">
+        <input type="hidden" value="/exams/{{exam.exam_id}}" name="path" />
+        <input type="hidden" value="{{exam.exam_id}}" name="exam_id" />
+        <input type="hidden" value="{{total_points_received}}" name="total_score" />
+        <input type="submit" value="Lähetä vastaukset ja lopeta koe">
+    </form>
+</p>
 {% endif %}
-<p> <b>Koekysymyksiä: </b> {% if max_points==None %} 0 {% else %} {{ questions_count }} {% endif %}
-<p> <b>Kokonaispisteet: </b> 
-    {% if answered_questions_count > 0 %} {{total_points_received}}
-    {% else %} _ {% endif %} 
-    / {% if max_points==None %} 0 
-    {% else %} {{ max_points }} {% endif %}
+
+{% if exam_finished %}
+    <i><b> Koe lopetettu: {{ exam_finished}} </b></i> <br>
+{% endif %}
+<b> Koe kysymyksiä: </b> {% if max_points==None %} 0 {% else %} {{ questions_count }} {% endif %} <br>
+<b> Kokonaispisteet: </b> 
+{% if answered_questions_count > 0 %} {{total_points_received}}
+{% else %} _ {% endif %} 
+/ {% if max_points==None %} 0 
+{% else %} {{ max_points }} {% endif %}
 
 <hr>
-<h3>Koe kysymykset:</h3>
+<h4><u>Kysymykset:</u></h4>
 
 {% if max_points==None %}
 <hr>
@@ -24,8 +39,8 @@
                 <input type="hidden" value="/exams/{{exam.exam_id}}" name="path" />
                 <input type="hidden" value="{{exam.exam_id}}" name="exam_id" />
                 <input type="hidden" value="{{question.question_id}}" name="question_id" />
-                <b>Vastaus: </b><input type="text" name="answer">
-                <p><input type="submit" value="Vastaa"/>
+                <b>Vastaus: </b><input type="text" name="answer"> <br> <br>
+                <input type="submit" value="Vastaa"/>
             </form>
         </p>
         <p>Pisteet: _ / {{question.points}}
@@ -40,13 +55,4 @@
     {% endfor %}
 {% endif %}
 
-{% if exam_finished == None %}
-<p>
-    <form action="/exam/submit" method="POST">
-        <input type="hidden" value="/exams/{{exam.exam_id}}" name="path" />
-        <input type="hidden" value="{{exam.exam_id}}" name="exam_id" />
-        <input type="hidden" value="{{total_points_received}}" name="total_score" />
-        <input type="submit" value="Lähetä vastaukset">
-    </form>
-</p>
-{% endif %}
+{% endblock %}
