@@ -1,8 +1,11 @@
-<h3>Kirjaudu sisään:</h3>
+{% extends "layout.html" %}
+{% block title %} Kirjautuminen {% endblock %}
+{% block content %}
+<h2>Kirjaudu sisään</h2> <br>
 <form action="/login" method="POST">
     <b>Käyttäjänimi:</b> <input type="text" name="username"> <br> <br>
     <b>Salasana:</b> <input type="password" name="password"> <br> <br>
     <input type="submit" value="Kirjaudu">
 </form>
-<hr>
-Tai <a href="/register">luo tunnus</a>
+<br>
+{% endblock %}
