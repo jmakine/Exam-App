@@ -1,21 +1,21 @@
 # Koe-sovellus
 
-Sovelluksen käyttäjä on joko opettaja tai opiskelija. Sovelluksen avulla opettaja voi luoda eri kouluaineiden kokeita, joissa on automaattisesti tarkastettavia tehtäviä. _Opiskelijat voivat suorittaa kokeita. Kesken..._
+Sovelluksen käyttäjä on joko opettaja tai opiskelija. Sovelluksen avulla opettaja voi luoda eri kouluaineiden kokeita, joissa on automaattisesti tarkastettavia tehtäviä. Opettaja näkee koe- ja käyttäjäkohtaiset tilastot. Opiskelijat voivat suorittaa kokeita sekä nähdä tulokset omista suorituksistaan.
 
 ## Sovelluksen ominaisuuksia: 
 *    Käyttäjä voi kirjautua sisään ja ulos sekä luoda uuden tunnuksen.
 *    Ensimmäinen rekisteröityjä on automaattisesti opettaja. Vain opettaja voi lisätä muita opettajia. Muut itse rekisteröityvät ovat automaattisesti opiskelijoita.
-*    Käyttäjä voi poistaa oman tilinsä. Opettaja voi poistaa myös muiden käyttäjien tilejä. Tietokannassa on aina oltava vähintään yksi opettaja, eli viimeistä ei pysty poistamaan.
-*    Opiskelija näkee listan kokeista kouluaineittain _ja voi suorittaa kokeen. Jos koe on jo suoritettu, näkee hän saamansa koetuloksen. Vielä toteuttamatta!_
+*    Käyttäjä voi poistaa oman tilinsä. Opettaja voi poistaa myös muiden käyttäjien tilejä. Tietokannassa on aina oltava vähintään yksi opettaja, eli viimeistä opettajaa ei pysty poistamaan.
+*    Opiskelija näkee listan kokeista ja voi suorittaa kokeen. Jos koe on jo suoritettu, näkee hän saamansa koetuloksen ja pystyy tarkastelemaan suorituksiaan.
 *    Opettaja pystyy lisäämään, poistamaan ja muokkaamaan kouluaineita, koetehtäviä ja kokeita.
 *    Yksittäinen koetehtävä sisältää kysymyksen, sekä tekstikentän, johon tulee kirjoittaa oikea vastaus.
-*    _Opettaja näkee kokeista tilaston, kuinka moni on suorittanut kokeen sekä tulosten keskiarvon. Vielä toteuttamatta!_
+*    Opettaja näkee kokeista tilaston, kuinka moni on suorittanut kokeen sekä tulosten keskiarvon.
 
 ### Lisäksi tehtävä vielä:
-*   Header, jossa kirjautuneen käyttäjän nimi, logout-nappula ja navbar käyttäjäystävällisempää navigointia varten.
-*   Validointeja tietokantaan _(ainakin tekstikenttien pituusrajoitukset)_
-*   Opiskelijan vastausten tarkistaminen ja koetulosten lisääminen tietokantaan. Vaatii varmaankin vielä yhden taulun.
+*   Validointeja tietokantaan: ainakin tekstikenttien pituusrajoitukset ja salasanalle jotain vaatimuksia.
+*   Koodin refaktorointia. Osa funktioista epäselvästi nimetty. Varmaankin joitain turhia sql-kyselyjä seassa.
 *   Kokeen aikaraja-toiminnallisuuden toteutus, jos ehtii.
+*   Sovelluksen ulkonäkö on melko persoonaton, muokataan jos ehtii. Error-sivulle voisi ainakin tehdä jotain..
 
 ## Sovelluksen käyttäminen:
 *   Kloonaa repositorio ja navigoi kloonattuun kansioon
