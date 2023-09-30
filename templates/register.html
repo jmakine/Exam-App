@@ -8,6 +8,7 @@
     <b>Salasana uudelleen:</b> <input type="password" name="password2"> <br> <br>
     <input type="hidden" value="student" name="role" />
     <input type="submit" value="Luo tunnus">
+    <input type="hidden" name="csrf_token" value="{{session.csrf_token}}">
 </form>
 <br>
 {% endblock %}
