@@ -13,6 +13,7 @@
     <b> Kokeen nimi: </b> <input type="text" name="name"> <br> <br>
     <b> Aikaraja (minuuttia): </b> <input type="number" name="timelimit"> <br> <br>
     <input type="submit" value="Lisää">
+    <input type="hidden" name="csrf_token" value="{{session.csrf_token}}">
 </form>
 <hr>
 {% endif %}
@@ -37,6 +38,7 @@
         <input type="hidden" value="{{exam.exam_id}}" name="exam_id" />
         <input type="submit" value="Poista" 
         onclick="return confirm('Kokeen poistaminen poistaa sen myös kaikista tilastoista. Haluatko varmasti poistaa kokeen?');"/>
+        <input type="hidden" name="csrf_token" value="{{session.csrf_token}}">
     </form>
 </p>
 {% endif %}

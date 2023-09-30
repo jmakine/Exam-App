@@ -12,6 +12,7 @@
         <input type="hidden" value="{{exam.exam_id}}" name="exam_id" />
         <input type="hidden" value="{{total_points_received}}" name="total_score" />
         <input type="submit" value="Lähetä vastaukset ja lopeta koe">
+        <input type="hidden" name="csrf_token" value="{{session.csrf_token}}">
     </form>
 </p>
 {% endif %}
@@ -41,6 +42,7 @@
                 <input type="hidden" value="{{question.question_id}}" name="question_id" />
                 <b>Vastaus: </b><input type="text" name="answer"> <br> <br>
                 <input type="submit" value="Vastaa"/>
+                <input type="hidden" name="csrf_token" value="{{session.csrf_token}}">
             </form>
         </p>
         <p>Pisteet: _ / {{question.points}}

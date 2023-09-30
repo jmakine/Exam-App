@@ -22,6 +22,7 @@
     <b> Pisteet: </b> <br>
     <input type="number" name="points"> <br> <br>
     <input type="submit" value="Lähetä">
+    <input type="hidden" name="csrf_token" value="{{session.csrf_token}}">
 </form>
 <hr>
 
@@ -39,6 +40,7 @@
         <input type="hidden" value="/subjects/{{subject.id}}/questions" name="path" />
         <input type="hidden" value="{{question.id}}" name="question_id" />
         <input type="submit" value="Poista"/>
+        <input type="hidden" name="csrf_token" value="{{session.csrf_token}}">
     </form>
 </p>
 <hr>

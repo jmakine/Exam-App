@@ -29,6 +29,7 @@
         <input type="hidden" value="{{exam.exam_id}}" name="exam_id" />
         <input type="hidden" value="{{question.question_id}}" name="question_id" />
         <input type="submit" value="Poista kysymys"/>
+        <input type="hidden" name="csrf_token" value="{{session.csrf_token}}">
     </form>
 </p>
 <hr>
@@ -46,6 +47,7 @@
             {% endfor %}
         </select> <br> <br>
         <input type="submit" value="Lisää kysymys"/>
+        <input type="hidden" name="csrf_token" value="{{session.csrf_token}}">
     </form>
 </p>
 {% endif %}

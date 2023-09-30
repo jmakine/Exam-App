@@ -14,6 +14,7 @@
         <option value="teacher">Opettaja</option>
     </select> <br> <br>
     <input type="submit" value="Lisää"> <br>
+    <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
 </form>
 <hr>
 
@@ -34,6 +35,7 @@
             <input type="hidden" value="{{user.role}}" name="role_to_delete" />
             <a onclick="return confirm(`Haluatko varmasti poistaa oman käyttäjätilisi?`);">
             <input type="submit" value="Poista"/>
+            <input type="hidden" name="csrf_token" value="{{session.csrf_token}}">
         </form>
     </p>
     {% else %}
@@ -43,6 +45,7 @@
             <input type="hidden" value="{{user.role}}" name="role_to_delete" />
             <a onclick="return confirm(`Haluatko varmasti poistaa käyttäjän?`);">
             <input type="submit" value="Poista"/>
+            <input type="hidden" name="csrf_token" value="{{session.csrf_token}}">
         </form>
     </p>
     {% endif %}
