@@ -5,6 +5,11 @@
 <b>Aihealue:</b> {{ subject.name }}
 <hr>
 
+<h5>
+    <i style="color: red;">Kysymyksen poistaminen poistaa sen myös tilastoista, ja vaikuttaa kaikkiin kokeisiin, joissa kysymystä on käytetty.</i>
+</h5>
+<hr>
+
 {% if session.role == "teacher" %}
 <h3>Lisää uusi kysymys:</h3>
 <form action="/questions/add" method="POST">
@@ -33,7 +38,7 @@
     <form action="/questions/delete" method="POST">
         <input type="hidden" value="/subjects/{{subject.id}}/questions" name="path" />
         <input type="hidden" value="{{question.id}}" name="question_id" />
-        <input type="submit" value="Poista" onclick="return confirm('Kysymyksen poistaminen poistaa sen myös kaikista tilastoista, ja vaikuttaa kaikkiin kokeisiin, joissa kysymystä on käytetty. Haluatko varmasti poistaa kysymyksen?');"/>
+        <input type="submit" value="Poista"/>
     </form>
 </p>
 <hr>
