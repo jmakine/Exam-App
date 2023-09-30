@@ -1,6 +1,13 @@
 {% extends "layout.html" %}
 {% block title %} Kokeet {% endblock %}
 {% block content %}
+
+<h5>
+    <i style="color: red;">Huomioithan, että kysymysten poistaminen ja lisääminen vaikuttaa myös 
+    jo suoritettuihin kokeisiin, joissa kysymystä on käytetty.</i>
+</h5>
+<hr>
+
 <h2> {{ exam.name }} </h2>
 <b> Aikaraja: </b> {{ exam.time_limit_minutes }} minuuttia <br>
 <b> Koekysymyksiä: </b> {% if max_points==None %} 0 {% else %} {{ questions_count }} {% endif %} <br>
@@ -21,13 +28,14 @@
         <input type="hidden" value="/exams/{{exam.exam_id}}" name="path" />
         <input type="hidden" value="{{exam.exam_id}}" name="exam_id" />
         <input type="hidden" value="{{question.question_id}}" name="question_id" />
-        <input type="submit" value="Poista kysymys" onclick="return confirm('Kysymyksen poistaminen kokeelta vaikuttaa myös jo suoritettuihin kokeisiin, joissa kysymystä on käytetty. Haluatko varmasti poistaa kysymyksen kokeelta?');"/>
+        <input type="submit" value="Poista kysymys"/>
     </form>
 </p>
 <hr>
 {% endfor %}
 {% endif %}
 
+{% if available_questions_count > 0 %}
 <p> <h4> Lisää kokeelle kysymys: </h4>
     <form action="/exam/add_question" method="POST">
         <input type="hidden" value="/exams/{{exam.exam_id}}" name="path" />
@@ -37,7 +45,8 @@
             <option value="{{question.question_id}}">{{question.question}}</option>
             {% endfor %}
         </select> <br> <br>
-        <input type="submit" value="Lisää kysymys"onclick="return confirm('Kysymyksen lisääminen kokeelle vaikuttaa myös jo suoritettuihin kokeisiin, joissa kysymystä on käytetty. Haluatko varmasti lisätä kysymyksen kokeelle?');"/>
+        <input type="submit" value="Lisää kysymys"/>
     </form>
 </p>
+{% endif %}
 {% endblock %}
