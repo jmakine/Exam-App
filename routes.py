@@ -57,9 +57,11 @@ def get_users():
     
 @app.route("/users_table")
 def get_exam_stats():
-    stats_by_user = exams.get_exam_stats()
-    return render_template("users_table.html", 
-                           stats=stats_by_user)
+    if users.user_role() == 'teacher':
+        stats_by_user = exams.get_exam_stats()
+        return render_template("users_table.html", stats=stats_by_user)
+    else: 
+        return redirect("/")
 
 @app.route("/users/add", methods=["POST"])
 def add_user():
@@ -77,20 +79,32 @@ def add_user():
 
 @app.route("/users/delete", methods=["POST"])
 def delete_user():
-    if users.user_role() == 'teacher':
-        id = request.form["id"]
-        if users.teacher_count() > 1:
-            users.delete_user(int(id))
+    id_to_delete = int(request.form["id_to_delete"])
+    role_to_delete = request.form["role_to_delete"]
+
+    if users.user_role() == 'teacher':        
+        if users.teacher_count() > 1 and users.user_id() == id_to_delete:
+            users.delete_user(id_to_delete)
+            return redirect("/logout")
+        elif users.teacher_count() > 1 or (users.teacher_count() == 1 and role_to_delete == 'student'):
+            users.delete_user(id_to_delete)
             return redirect("/users")
         else:
             return render_template("error.html", message="Et voi poistaa ainutta opettajaa")
+    elif users.user_role() == 'student':
+        if users.user_id() == id_to_delete:
+            users.delete_user(id_to_delete)
+            return redirect("/logout")
     else:
         return redirect("/")
 
 @app.route("/subjects", methods=["GET"])
 def get_subjects():
-    result = subjects.get_subjects()
-    return render_template("subjects.html", subjects=result)
+    if users.user_role() == 'teacher':
+        result = subjects.get_subjects()
+        return render_template("subjects.html", subjects=result)
+    else:
+        return redirect("/")
 
 @app.route("/subjects/add", methods=["POST"])
 def add_subject():
@@ -210,6 +224,7 @@ def get_exam(exam_id):
                             exam=exam, 
                             exams_questions=exams_questions, 
                             available_questions=available_questions, 
+                            available_questions_count=len(available_questions), 
                             questions_count=len(exams_questions), 
                             max_points=max_points.total_points)
     else:
