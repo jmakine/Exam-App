@@ -4,22 +4,22 @@ from flask import session
 from werkzeug.security import check_password_hash, generate_password_hash
 
 def get_users():
-    sql = "SELECT * FROM users;"
+    sql = "SELECT id, username, role FROM users;"
     if user_role() == "teacher":
         return db.session.execute(text(sql)).fetchall()
     else:
         return False
     
 def teacher_count():
-    sql = "SELECT * FROM users WHERE role='teacher';"
+    sql = "SELECT id FROM users WHERE role='teacher';"
     return len(db.session.execute(text(sql)).fetchall())
 
 def user_count():
-    sql = "SELECT count(id) FROM users GROUP BY id;"
+    sql = "SELECT id FROM users;"
     return len(db.session.execute(text(sql)).fetchall())
 
 def get_user(id):
-    sql = "SELECT * FROM users WHERE id=:id;"
+    sql = "SELECT id, username, role FROM users WHERE id=:id;"
     if user_role() == "teacher" or user_id() == id:
         return db.session.execute(text(sql), {"id":id}).fetchone()
     else:
@@ -27,7 +27,8 @@ def get_user(id):
 
 def add_user(username, password, role):
     hash_value = generate_password_hash(password)
-    sql = "INSERT INTO users (username, password, role) VALUES (:username, :password, :role)"
+    sql = "INSERT INTO users (username, password, role) \
+        VALUES (:username, :password, :role);"
 
     if user_role() == "teacher":
         try:
@@ -38,25 +39,24 @@ def add_user(username, password, role):
     else: return False
 
 def delete_user(id):
-    sql = "DELETE FROM users WHERE id=:id"
-    if user_role() == "teacher":
-        try:
-            db.session.execute(text(sql), {"id":id})
-            db.session.commit()
-        except:
-            return False
-    else:
+    sql = "DELETE FROM users WHERE id=:id;"
+    try:
+        db.session.execute(text(sql), {"id":id})
+        db.session.commit()
+    except:
         return False
     
 def register(username, password):
     hash_value = generate_password_hash(password)
     try:
         if user_count() == 0:
-            sql = "INSERT INTO users (username, password, role) VALUES (:username, :password, 'teacher')"
+            sql = "INSERT INTO users (username, password, role) \
+                VALUES (:username, :password, 'teacher');"
             db.session.execute(text(sql), {"username":username, "password":hash_value})
             db.session.commit()
         else:
-            sql = "INSERT INTO users (username, password, role) VALUES (:username, :password, 'student')"
+            sql = "INSERT INTO users (username, password, role) \
+                VALUES (:username, :password, 'student');"
             db.session.execute(text(sql), {"username":username, "password":hash_value})
             db.session.commit()
     except:
@@ -64,12 +64,12 @@ def register(username, password):
     return login(username, password)
 
 def username_exists(username):
-    sql = "SELECT COUNT(username) FROM users WHERE username=:username GROUP by username"
+    sql = "SELECT id FROM users WHERE username=:username;"
     username_exists = db.session.execute(text(sql), {"username":username}).fetchall()
     return username_exists != []
 
 def login(username, password):
-    sql = "SELECT id, password, role, username FROM users WHERE username=:username"
+    sql = "SELECT id, password, role, username FROM users WHERE username=:username;"
     result = db.session.execute(text(sql), {"username":username})
     user = result.fetchone()
     if not user:
