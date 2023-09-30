@@ -66,6 +66,7 @@ def get_exam_stats():
 @app.route("/users/add", methods=["POST"])
 def add_user():
     if users.user_role() == 'teacher':
+        users.check_csrf()
         username = request.form["username"]
         password = request.form["password"]
         role = request.form["role"]
@@ -81,6 +82,7 @@ def add_user():
 def delete_user():
     id_to_delete = int(request.form["id_to_delete"])
     role_to_delete = request.form["role_to_delete"]
+    users.check_csrf()
 
     if users.user_role() == 'teacher':        
         if users.teacher_count() > 1 and users.user_id() == id_to_delete:
@@ -109,6 +111,7 @@ def get_subjects():
 @app.route("/subjects/add", methods=["POST"])
 def add_subject():
     if users.user_role() == 'teacher':
+        users.check_csrf()
         name = request.form["name"]
         if subjects.subjectname_exists(name) == True:
             return render_template("error.html", message="Tämän niminen aihealue on jo olemassa")
@@ -121,6 +124,7 @@ def add_subject():
 @app.route("/subjects/delete", methods=["POST"])
 def delete_subject():
     if users.user_role() == 'teacher':
+        users.check_csrf()
         id = request.form["id"]
         subjects.delete_subject(int(id))
     return redirect("/subjects")
@@ -137,6 +141,7 @@ def get_questions(subject_id):
 @app.route("/questions/add", methods=["POST"])
 def add_question():
     if users.user_role() == 'teacher':
+        users.check_csrf()
         path=request.form["path"]
         subject_id=request.form["subject_id"]
         question=request.form["question"]
@@ -150,6 +155,7 @@ def add_question():
 @app.route("/questions/delete", methods=["POST"])
 def delete_question():
     if users.user_role() == 'teacher':
+        users.check_csrf()
         path=request.form["path"]
         question_id=request.form["question_id"]
         questions.delete_question(question_id)
@@ -190,6 +196,7 @@ def get_all_exams():
 @app.route("/exams/add", methods=["POST"])
 def add_exam():
     if users.user_role() == 'teacher':
+        users.check_csrf()
         path=request.form["path"]
         subject_id=request.form["subject_id"]
         name=request.form["name"]
@@ -205,6 +212,7 @@ def add_exam():
 @app.route("/exams/delete", methods=["POST"])
 def delete_exam():
     if users.user_role() == 'teacher':
+        users.check_csrf()
         path=request.form["path"]
         exam_id=request.form["exam_id"]
         exams.delete_exam(exam_id)
@@ -255,6 +263,7 @@ def get_exam(exam_id):
 @app.route("/exam/add_question", methods=["POST"])
 def add_exam_question():
     if users.user_role() == 'teacher':
+        users.check_csrf()
         path=request.form["path"]
         exam_id=request.form["exam_id"]
         question_id=request.form["question_id"]
@@ -266,6 +275,7 @@ def add_exam_question():
 @app.route("/exam/remove_question", methods=["POST"])
 def remove_exam_question():
     if users.user_role() == 'teacher':
+        users.check_csrf()
         path=request.form["path"]
         exam_id=request.form["exam_id"]
         question_id=request.form["question_id"]
@@ -277,6 +287,7 @@ def remove_exam_question():
 @app.route("/exam/answer_question", methods=["POST"])
 def submit_answer():
     if users.user_role() == 'student':
+        users.check_csrf()
         path=request.form["path"]
         exam_id=request.form["exam_id"]
         question_id=request.form["question_id"]
@@ -289,6 +300,7 @@ def submit_answer():
 @app.route("/exam/submit", methods=["POST"])
 def submit_exam():
     if users.user_role() == 'student':
+        users.check_csrf()
         user_id = users.user_id()
         path=request.form["path"]
         exam_id=request.form["exam_id"]
