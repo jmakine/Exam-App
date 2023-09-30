@@ -1,6 +1,7 @@
 from db import db
+import secrets
 from sqlalchemy.sql import text
-from flask import session
+from flask import session, request, abort
 from werkzeug.security import check_password_hash, generate_password_hash
 
 def get_users():
@@ -74,14 +75,14 @@ def login(username, password):
     user = result.fetchone()
     if not user:
         return False
-    else:
-        if check_password_hash(user.password, password):
-            session["user_id"] = user.id
-            session["role"] = user.role
-            session["username"] = user.username
-            return True
-        else:
-            return False
+    if not check_password_hash(user.password, password):
+        return False
+    else: 
+        session["user_id"] = user.id
+        session["role"] = user.role
+        session["username"] = user.username
+        session["csrf_token"] = secrets.token_hex(16)
+        return True            
         
 def logout():
     del session["user_id"]
@@ -93,3 +94,7 @@ def user_id():
 
 def user_role():
     return session.get("role",0)
+
+def check_csrf():
+    if session["csrf_token"] != request.form["csrf_token"]:
+        abort(403)
