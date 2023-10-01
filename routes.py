@@ -18,7 +18,6 @@ def login():
     if request.method == "GET":
         return render_template("login.html")
     if request.method == "POST":
-        users.check_csrf()
         username = request.form["username"]
         password = request.form["password"]
         if users.login(username, password):
