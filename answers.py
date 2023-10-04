@@ -14,8 +14,8 @@ def get_exam_question_id(question_id, exam_id):
     exam_question_id = db.session.execute(text(sql), {"exam_id":exam_id, "question_id":question_id}).fetchone()
     return exam_question_id.exam_question_id
 
+# Ignore case, remove any leading and trailing whitespace and replace . by ,
 def check_answer(users_answer, correct_answer):
-    # Ignore case, remove any leading and trailing whitespace and replace . by ,
     users_answer=users_answer.lower().strip().replace('.', ',')
     correct_answer=correct_answer.lower().strip().replace('.', ',')
     if(users_answer == correct_answer):
@@ -25,7 +25,7 @@ def check_answer(users_answer, correct_answer):
 
 def get_answer_and_points(question_id):
     sql = "SELECT answer, points from questions WHERE id=:question_id"
-    result = db.session.execute(text(sql), {"question_id":question_id}).fetchone() # ).fetchone()  #, 
+    result = db.session.execute(text(sql), {"question_id":question_id}).fetchone() 
     return result
 
 def answer_question(question_id, exam_id, answer):
@@ -62,12 +62,8 @@ def submitted_answers(exam_id, user_id):
     return db.session.execute(text(sql), {"exam_id":exam_id, "user_id":user_id}).fetchall()
 
 def get_exams_and_points(user_id):
-    sql = "SELECT eq.exam_id, SUM(ua.points_received) as points_received, TO_CHAR(ue.exam_finished, 'YYYY/MM/DD HH24:MM:SS') as exam_finished, TO_CHAR(ue.exam_started, 'YYYY/MM/DD HH24:MM:SS') as exam_started FROM users_answers ua \
-        LEFT JOIN exams_questions eq on eq.id=ua.exams_question_id \
-        LEFT JOIN questions q on q.id=eq.question_id \
-        LEFT JOIN users_exams ue on ua.user_exam_id=ue.id \
-        WHERE ue.user_id=:user_id \
-        GROUP BY eq.exam_id, exam_finished, exam_started"
+    sql = "SELECT exam_id, user_id, TO_CHAR(exam_finished, 'YYYY/MM/DD HH24:MM:SS') as exam_finished, TO_CHAR(exam_started, 'YYYY/MM/DD HH24:MM:SS') as exam_started, total_score as points_received \
+        FROM users_exams WHERE user_id=:user_id;"
     return db.session.execute(text(sql), {"user_id":user_id}).fetchall()
 
 def get_all_exams_and_points():
