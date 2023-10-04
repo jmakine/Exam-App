@@ -179,18 +179,18 @@ def get_exams(subject_id):
 def get_all_exams():
     all_exams = answers.get_all_exams_and_points()
     user_id = users.user_id()
-    user = answers.get_exams_and_points(user_id)
+    users_exams = answers.get_exams_and_points(user_id)
     started_exam_ids = []
-    for exam in user:
+    for exam in users_exams:
         if exam.exam_finished == None and exam.exam_started != None :
             started_exam_ids.append(exam.exam_id)
     submitted_exam_ids = []
-    for exam in user:
+    for exam in users_exams:
         if exam.exam_finished != None:
             submitted_exam_ids.append(exam.exam_id)
     return render_template("exams_table.html", 
                            exams=all_exams, 
-                           users_points=user, 
+                           users_exams=users_exams, 
                            submitted_exam_ids=submitted_exam_ids,
                            started_exam_ids=started_exam_ids)
 
@@ -267,7 +267,8 @@ def add_exam_question():
         users.check_csrf()
         path=request.form["path"]
         exam_id=request.form["exam_id"]
-        question_id=request.form["question_id"]
+        question=request.form["question"]
+        question_id=questions.get_question_id(question)
         exams.add_question(question_id, exam_id)
         return redirect(path)
     else:
