@@ -7,6 +7,11 @@ def get_questions(subject_id):
                 WHERE q.subject_id=:id AND s.id=:id"
     return db.session.execute(text(sql), {"id":subject_id}).fetchall()
 
+def get_question_id(question):
+    sql = "SELECT id FROM questions WHERE question=:question"
+    response = db.session.execute(text(sql), {"question":question}).fetchone()
+    return response[0]
+
 def count_questions(subject_id):
     return len(get_questions(subject_id))
 
