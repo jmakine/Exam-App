@@ -41,11 +41,20 @@
     <form action="/exam/add_question" method="POST">
         <input type="hidden" value="/exams/{{exam.exam_id}}" name="path" />
         <input type="hidden" value="{{exam.exam_id}}" name="exam_id" />       
-        <select name="question_id">
+        <select name="question" onchange="updateSelected(event)">
             {% for question in available_questions %}
-            <option value="{{question.question_id}}">{{question.question}}</option>
+            <option value="{{question.question}}">{{question.question[:40]}}</option>
             {% endfor %}
         </select> <br> <br>
+        <div style="width:350px; border:1px solid blue; border-inline: 5mm;">
+            <i id="res"> </i>
+        </div> <br>
+            <script>
+                function updateSelected(event) {
+                    document.getElementById('res').innerHTML = event.target.value;
+                }
+            </script>
+
         <input type="submit" value="Lisää kysymys"/>
         <input type="hidden" name="csrf_token" value="{{session.csrf_token}}">
     </form>
