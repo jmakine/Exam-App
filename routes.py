@@ -177,7 +177,7 @@ def get_exams(subject_id):
 
 @app.route("/exams")
 def get_all_exams():
-    all_exams = answers.get_all_exams_and_points()
+    exams_stats = answers.get_exams_stats()
     user_id = users.user_id()
     users_exams = answers.get_exams_and_points(user_id)
     started_exam_ids = []
@@ -189,7 +189,7 @@ def get_all_exams():
         if exam.exam_finished != None:
             submitted_exam_ids.append(exam.exam_id)
     return render_template("exams_table.html", 
-                           exams=all_exams, 
+                           exams_stats=exams_stats, 
                            users_exams=users_exams, 
                            submitted_exam_ids=submitted_exam_ids,
                            started_exam_ids=started_exam_ids)
