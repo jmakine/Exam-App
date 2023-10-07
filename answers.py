@@ -66,8 +66,8 @@ def get_exams_and_points(user_id):
         FROM users_exams WHERE user_id=:user_id;"
     return db.session.execute(text(sql), {"user_id":user_id}).fetchall()
 
-def get_all_exams_and_points():
-    sql = "SELECT users_summary.users_count, users_summary.total_score, users_summary.average_score, subject_exams.subject_id, subject_exams.subject_name, subject_exams.exam_id, subject_exams.exam_name, subject_exams.time_limit_minutes, exam_summary.total_questions, exam_summary.max_points \
+def get_exams_stats():
+    sql = "SELECT users_summary.submitted, users_summary.unsubmitted, users_summary.total_score, users_summary.average_score, subject_exams.subject_id, subject_exams.subject_name, subject_exams.exam_id, subject_exams.exam_name, subject_exams.time_limit_minutes, exam_summary.total_questions, exam_summary.max_points \
         FROM (SELECT s.id as subject_id, s.name as subject_name, e.id as exam_id, e.name as exam_name, e.time_limit_minutes \
             FROM exams e, subjects s \
             WHERE e.subject_id=s.id) as subject_exams \
@@ -75,8 +75,11 @@ def get_all_exams_and_points():
                     FROM exams e \
                         LEFT JOIN exams_questions eq ON e.id=eq.exam_id LEFT JOIN questions q ON q.id=eq.question_id GROUP BY e.id) as exam_summary ON subject_exams.exam_id=exam_summary.exam_id \
         LEFT JOIN ( \
-            SELECT exam_id, COUNT(user_id) as users_count, SUM(total_score) as total_score, round((SUM(total_score)*1.0/COUNT(user_id)*1.0),1) as average_score \
-            FROM users_exams GROUP BY exam_id HAVING SUM(total_score) IS NOT NULL) as users_summary \
+            SELECT exam_id, submitted, unsubmitted, total_score, average_score \
+                FROM (SELECT exam_id, COUNT(exam_finished) as submitted, SUM(total_score) as total_score, round((SUM(total_score)*1.0/COUNT(exam_finished)*1.0),1) \
+                    as average_score FROM users_exams GROUP BY exam_id HAVING COUNT(exam_finished) IS NOT NULL) as submitted \
+                        LEFT JOIN (SELECT exam_id as e_id, COUNT(user_id) as unsubmitted FROM users_exams GROUP BY exam_id, exam_finished HAVING exam_finished IS NULL ) as unsubmitted \
+                            ON submitted.exam_id=unsubmitted.e_id) as users_summary \
         ON users_summary.exam_id=subject_exams.exam_id"
     result = db.session.execute(text(sql)).fetchall()
     return result
