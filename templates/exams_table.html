@@ -1,4 +1,5 @@
 {% extends "layout.html" %}
+{% block title %} Kokeet {% endblock %}
 {% block content %}
 <h2>Kokeet</h2>
 
@@ -66,20 +67,23 @@
             <th>Maksimipisteet</th>
             <th>Suorituksia</th>
             <th>Keskiarvo</th>
+            <th>Suorituksia kesken</th>
         </tr>
     </thead>
     <tbody>
-        {% for exam in exams %}
+        {% for exam in exams_stats %}
         <tr>
             <td>{{ exam.subject_name }}</td>
             <td>{{ exam.exam_name }}</td>
             <td>{{ exam.total_questions }}</td>
             <td>{{ exam.time_limit_minutes }}</td>
             <td>{{ exam.max_points }}</td>
-            <td>{% if exam.users_count == None %} -
-                {% else %} {{ exam.users_count }} {% endif %}</td>
+            <td>{% if exam.submitted == None %} -
+                {% else %} {{ exam.submitted }} {% endif %}</td>
             <td>{% if exam.average_score == None %} -
                 {% else %} {{ exam.average_score }} {% endif %}</td>
+            <td>{% if exam.unsubmitted == None %} -
+              {% else %} {{ exam.unsubmitted }} {% endif %}</td>
         </tr>
         {% endfor %}
     </tbody>
@@ -112,6 +116,7 @@
         columns: [
           null,
           null,
+          {searchable: false},
           {searchable: false},
           {searchable: false},
           {searchable: false},
