@@ -1,10 +1,10 @@
 {% extends "layout.html" %}
-{% block title %} Kirjautuminen {% endblock %}
+{% block title %} Käyttäjät {% endblock %}
 {% block content %}
 <h2>Käyttäjät</h2>
 <hr>
 
-<form action="/users/add" method="POST">
+<form action="/users/add" method="POST" onsubmit="return check_add(this)">
     <h3>Lisää käyttäjä:</h3>
     <b>Nimi: </b><input type="text" name="username"> <br> <br>
     <b>Salasana: </b><input type="password" name="password"> <br> <br>
@@ -16,6 +16,20 @@
     <input type="submit" value="Lisää"> <br>
     <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
 </form>
+
+<script>
+    function check_add(form) {
+        if(form.username.value.length < 5 || form.username.value.length > 20) {
+            alert("Käyttäjätunnuksen tulee olla vähintään 5 ja enintään 20 merkkiä pitkä.")
+            return false
+        }
+        if(form.password.value.length < 8 || form.password.value.length > 20) {
+            alert("Salasanan tulee olla vähintään 8 ja enintään 20 merkkiä pitkä.")
+            return false 
+        }
+        return true
+    }
+</script>
 <hr>
 
 {% for user in users %}
