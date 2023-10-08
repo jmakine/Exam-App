@@ -2,10 +2,9 @@
 {% block title %} Koe {% endblock %}
 {% block content %}
 
-<h5>
-    <i style="color: red;">Huomioithan, että kysymysten poistaminen ja lisääminen vaikuttaa myös 
-    jo suoritettuihin kokeisiin, joissa kysymystä on käytetty.</i>
-</h5>
+<h6><i style="color: red;">
+    Huomioithan, että kysymysten poistaminen ja lisääminen vaikuttaa kokeen tilastoihin, mikäli kokeella on jo suorituksia.
+</i></h6>
 <hr>
 
 <h2> {{ exam.name }} </h2>
@@ -28,7 +27,7 @@
         <input type="hidden" value="/exams/{{exam.exam_id}}" name="path" />
         <input type="hidden" value="{{exam.exam_id}}" name="exam_id" />
         <input type="hidden" value="{{question.question_id}}" name="question_id" />
-        <input type="submit" value="Poista kysymys"/>
+        <input type="submit" class="btn btn-danger" value="Poista kysymys"/>
         <input type="hidden" name="csrf_token" value="{{session.csrf_token}}">
     </form>
 </p>
@@ -60,7 +59,7 @@
             });
         </script>
 
-        <input type="submit" value="Lisää kysymys"/>
+        <input type="submit" class="btn btn-primary" value="Lisää kysymys"/>
         <input type="hidden" name="csrf_token" value="{{session.csrf_token}}">
     </form>
 </p>

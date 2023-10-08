@@ -29,7 +29,7 @@
 {% else %} {{ max_points }} {% endif %}
 
 <hr>
-<h4><u>Kysymykset:</u></h4>
+<h4><u>Kysymykset:</u></h4> <br>
 
 {% if max_points==None %}
 <hr>
@@ -42,11 +42,11 @@
                 <input type="hidden" value="{{exam.exam_id}}" name="exam_id" />
                 <input type="hidden" value="{{question.question_id}}" name="question_id" />
                 <b>Vastaus: </b><input type="text" name="answer"> <br> <br>
-                <input type="submit" value="Vastaa"/>
+                <input type="submit" class="btn btn-primary" value="Vastaa"/>
                 <input type="hidden" name="csrf_token" value="{{session.csrf_token}}">
             </form>
         </p>
-        <p>Pisteet: _ / {{question.points}}
+        <p><b>Pisteet: </b> _ / {{question.points}}
         <hr>
     {% endfor %}
     {% for i in range(answered_questions_count) %}

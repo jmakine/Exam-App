@@ -8,7 +8,7 @@
 <form action="/subjects/add" method="POST">
     <h3>Lisää aihealue:</h3>
     <input type="text" name="name"> <br> <br>
-    <input type="submit" value="Lisää">
+    <input type="submit" class="btn btn-primary" value="Lisää">
     <input type="hidden" name="csrf_token" value="{{session.csrf_token}}">
 </form>
 <hr>
@@ -22,7 +22,7 @@
 <p>
     <form action="/subjects/delete" method="POST">
         <input type="hidden" value="{{subject.id}}" name="id" />
-        <input type="submit" value="Poista" onclick="return confirm('Aihealueen poistaminen poistaa sen myös kaikista tilastoista sekä siihen liittyvät kokeet ja kysymykset. Haluatko varmasti poistaa aihealueen?');"/>
+        <input type="submit" class="btn btn-danger" value="Poista" onclick="return confirm('Aihealueen poistaminen poistaa sen myös kaikista tilastoista sekä siihen liittyvät kokeet ja kysymykset. Haluatko varmasti poistaa aihealueen?');"/>
         <input type="hidden" name="csrf_token" value="{{session.csrf_token}}">
     </form>
 </p>
