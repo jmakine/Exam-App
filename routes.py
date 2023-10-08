@@ -41,9 +41,7 @@ def register():
         password2 = request.form["password2"]
         if users.username_exists(username) == True:
             return render_template("error.html", message="Käyttäjänimi varattu")
-        if password1 != password2:
-            return render_template("error.html", message="Syötä sama salasana molempiin kenttiin")
-        if users.register(username, password1):
+        if password1 == password2 and users.register(username, password1):
             return redirect("/")
         else:
             return render_template("error.html", message="Rekisteröinti epäonnistui")
