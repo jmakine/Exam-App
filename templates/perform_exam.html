@@ -11,7 +11,7 @@
         <input type="hidden" value="/exams/{{exam.exam_id}}" name="path" />
         <input type="hidden" value="{{exam.exam_id}}" name="exam_id" />
         <input type="hidden" value="{{total_points_received}}" name="total_score" />
-        <input type="submit" value="Lähetä vastaukset ja lopeta koe">
+        <input type="submit" class="btn btn-primary" value="Lähetä vastaukset ja lopeta koe">
         <input type="hidden" name="csrf_token" value="{{session.csrf_token}}">
     </form>
 </p>
@@ -19,6 +19,7 @@
 
 {% if exam_finished %}
     <i><b> Koe lopetettu: {{ exam_finished}} </b></i> <br>
+    <b>Aikaa käytetty: </b> {{ time_spent[0] }} minuuttia, {{ time_spent[1] }} sekuntia <br>
 {% endif %}
 <b> Koe kysymyksiä: </b> {% if max_points==None %} 0 {% else %} {{ questions_count }} {% endif %} <br>
 <b> Kokonaispisteet: </b> 
