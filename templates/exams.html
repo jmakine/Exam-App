@@ -7,22 +7,39 @@
 
 {% if session.role == "teacher" %}
 <h3>Luo uusi koe:</h3>
-<form action="/exams/add" method="POST">
+<form action="/exams/add" method="POST" onsubmit="return check_add(this)">
     <input type="hidden" value="/subjects/{{subject.id}}/exams" name="path" />
     <input type="hidden" value="{{subject.id}}" name="subject_id" />
-    <b> Kokeen nimi: </b> <input type="text" name="name"> <br> <br>
-    <b> Aikaraja (minuuttia): </b> <input type="number" name="timelimit"> <br> <br>
-    <input type="submit" value="Lisää">
+    <b> Kokeen nimi: </b> <br>
+    <input type="text" name="name"> <br> <br>
+    <b> Aikaraja (minuuttia): </b> <br>
+    <input type="number" name="timelimit"> <br> <br>
+    <input type="submit" class="btn btn-primary" value="Lisää">
     <input type="hidden" name="csrf_token" value="{{session.csrf_token}}">
 </form>
 <hr>
+
+<script>
+    const check_add = (form) => {
+        if(form.name.value.length < 4 || form.name.value.length > 30) {
+            alert("Kokeen nimen tulee olla vähintään 4 ja enintään 30 merkkiä pitkä.")
+            return false
+        }
+        if(form.timelimit.value < 1) {
+            alert("Aikarajan tulee olla vähintään 1 min.")
+            return false 
+        }
+        return true
+    }
+</script>
+
 {% endif %}
 
 {% for exam in exams %}
 <h3>{{ exam.exam_name }}</h3>
 <p> <b>Aikaraja: </b> {{ exam.time_limit_minutes }} minuuttia
 <p> <b>Kysymyksiä: </b> {{ exam.total_questions}}
-<p> <b>Maksimipisteet: </b> {{exam.max_points}}
+<p> <b>Maksimipisteet: </b> {% if exam.max_points == None %} - {% else %} {{exam.max_points}} {% endif %}
 
 {% if session.role == "student" and exam.exam_id not in completed_exam_ids %}
 <p> <a href="/exams/{{exam.exam_id}}" 
@@ -36,7 +53,7 @@
     <form action="/exams/delete" method="POST">
         <input type="hidden" value="/subjects/{{subject.id}}/exams" name="path" />
         <input type="hidden" value="{{exam.exam_id}}" name="exam_id" />
-        <input type="submit" value="Poista" 
+        <input type="submit" class="btn btn-danger" value="Poista" 
         onclick="return confirm('Kokeen poistaminen poistaa sen myös kaikista tilastoista. Haluatko varmasti poistaa kokeen?');"/>
         <input type="hidden" name="csrf_token" value="{{session.csrf_token}}">
     </form>
