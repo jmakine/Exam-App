@@ -39,6 +39,7 @@ CREATE TABLE users_exams (
     user_id INTEGER REFERENCES users ON DELETE CASCADE,
     exam_started TIMESTAMP,
     exam_finished TIMESTAMP,
+    time_spent INTEGER[],
     total_score INTEGER
 );
 
