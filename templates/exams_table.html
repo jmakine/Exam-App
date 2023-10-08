@@ -77,7 +77,8 @@
             <td>{{ exam.exam_name }}</td>
             <td>{{ exam.total_questions }}</td>
             <td>{{ exam.time_limit_minutes }}</td>
-            <td>{{ exam.max_points }}</td>
+            <td>{% if exam.max_points == None %} -
+                {% else %} {{ exam.max_points }} {% endif %}</td>
             <td>{% if exam.submitted == None %} -
                 {% else %} {{ exam.submitted }} {% endif %}</td>
             <td>{% if exam.average_score == None %} -
