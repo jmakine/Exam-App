@@ -6,16 +6,16 @@ Sovelluksen käyttäjä on joko opettaja tai opiskelija. Sovelluksen avulla opet
 *    Käyttäjä voi kirjautua sisään ja ulos sekä luoda uuden tunnuksen.
 *    Ensimmäinen rekisteröityjä on automaattisesti opettaja. Vain opettaja voi lisätä muita opettajia. Muut itse rekisteröityvät ovat automaattisesti opiskelijoita.
 *    Käyttäjä voi poistaa oman tilinsä. Opettaja voi poistaa myös muiden käyttäjien tilejä. Tietokannassa on aina oltava vähintään yksi opettaja, eli viimeistä opettajaa ei pysty poistamaan.
-*    Opiskelija näkee listan kokeista ja voi suorittaa kokeen. Jos koe on jo suoritettu, näkee hän saamansa koetuloksen ja pystyy tarkastelemaan suorituksiaan.
+*    Opiskelija näkee listan kokeista ja voi suorittaa kokeen. Jos koe on jo suoritettu, näkee hän saamansa koetuloksen, suoritukseen käyttämäänsä ajan, ja pystyy tarkastelemaan suorituksiaan.
 *    Opettaja pystyy lisäämään, poistamaan ja muokkaamaan kouluaineita, koetehtäviä ja kokeita.
-*    Yksittäinen koetehtävä sisältää kysymyksen, sekä tekstikentän, johon tulee kirjoittaa oikea vastaus.
+*    Yksittäinen koetehtävä sisältää kysymyksen, sekä tekstikentän, johon tulee kirjoittaa oikea vastaus. Opettaja määrittää kullekin kysymykselle siitä saatavat pisteet, mikäli vastaus on oikein.
 *    Opettaja näkee kokeista tilaston, kuinka moni on suorittanut kokeen sekä tulosten keskiarvon.
 
 ### Lisäksi tehtävä vielä:
-*   Validointeja tietokantaan: ainakin tekstikenttien pituusrajoitukset ja salasanalle jotain vaatimuksia.
-*   Koodin refaktorointia. Osa funktioista epäselvästi nimetty. Varmaankin joitain turhia sql-kyselyjä seassa.
-*   Kokeen aikaraja-toiminnallisuuden toteutus, jos ehtii.
-*   Sovelluksen ulkonäkö on melko persoonaton, muokataan jos ehtii. Error-sivulle voisi ainakin tehdä jotain..
+*   Opettajan 'Käyttäjätilastot' -näkymään suoritukseen käytetty aika näkyviin. Nyt on vasta opiskelijalle näkyvässä suoritustilastossa.
+*   Ilmoitukset onnistuneista lisäyksistä ja poistoista puuttuu vielä kokonaan. Opettajalla tämä tarkoittaa uuden kokeen, käyttäjän, aihealueen tai kysymyksen poistamista tai lisäämistä. Opiskelijalla valmiin kokeen lähetystä.
+*   Sovelluksen ulkonäkö on yhä melko persoonaton, mutta parempaan päin. Otetaan bootstrapin alerts käyttöön ja korvataan sillä nykyiset virheilmoitukset.
+*   Koodin refaktorointia.
 
 ## Sovelluksen käyttäminen:
 *   Kloonaa repositorio ja navigoi kloonattuun kansioon
@@ -24,7 +24,7 @@ Sovelluksen käyttäjä on joko opettaja tai opiskelija. Sovelluksen avulla opet
 *   Asenna flask: _pip install flask_
 *   Asenna riippuvuudet: _pip install -r requirements.txt_
 *   Määritä .env -tiedoston sisältö:
-    1.   Aseta PostgreSQL-osoite: 
+    1.  Aseta PostgreSQL-osoite: 
         DATABASE_URL=postgresql+psycopg2://**ip_address/db**?user=**username**&password=**password**
         (Esim. postgresql+psycopg2://**127.0.0.1/exam_app**?user=**jenni_penni**&password=**123abc**). 
     1.  Aseta salainen avain (jotain satunnaisia merkkejä): 
