@@ -15,15 +15,15 @@ CREATE TABLE subjects (
 CREATE TABLE questions (
     id SERIAL PRIMARY KEY,
     subject_id INTEGER REFERENCES subjects ON DELETE CASCADE,
-    question VARCHAR(100) UNIQUE NOT NULL CHECK(LENGTH(question) >= 3),
+    question VARCHAR(200) UNIQUE NOT NULL,
     answer VARCHAR(20) NOT NULL,
-    points INTEGER NOT NULL
+    points INTEGER NOT NULL CHECK(points > -1)
 );
 
 CREATE TABLE exams ( 
     id SERIAL PRIMARY KEY,
     name VARCHAR(30) UNIQUE NOT NULL CHECK(LENGTH(name) > 4),
-    time_limit_minutes INTEGER NOT NULL,
+    time_limit_minutes INTEGER NOT NULL CHECK(time_limit_minutes > 0),
     subject_id INTEGER REFERENCES subjects ON DELETE CASCADE
 );
 
