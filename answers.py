@@ -62,7 +62,7 @@ def submitted_answers(exam_id, user_id):
     return db.session.execute(text(sql), {"exam_id":exam_id, "user_id":user_id}).fetchall()
 
 def get_exams_and_points(user_id):
-    sql = "SELECT exam_id, user_id, TO_CHAR(exam_finished, 'YYYY/MM/DD HH24:MM:SS') as exam_finished, TO_CHAR(exam_started, 'YYYY/MM/DD HH24:MM:SS') as exam_started, total_score as points_received \
+    sql = "SELECT exam_id, user_id, TO_CHAR(exam_finished, 'YYYY/MM/DD HH24:MM:SS') as exam_finished, TO_CHAR(exam_started, 'YYYY/MM/DD HH24:MM:SS') as exam_started, total_score as points_received, time_spent \
         FROM users_exams WHERE user_id=:user_id;"
     return db.session.execute(text(sql), {"user_id":user_id}).fetchall()
 
