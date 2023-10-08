@@ -44,7 +44,7 @@ def register():
         if password1 == password2 and users.register(username, password1):
             return redirect("/")
         else:
-            return render_template("error.html", message="Rekisteröinti epäonnistui")
+            return redirect("/register")
 
 @app.route("/users", methods=["GET"])
 def get_users():
