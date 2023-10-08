@@ -2,7 +2,7 @@
 {% block title %} Luo tunnus {% endblock %}
 {% block content %}
 <h2>Luo tunnus</h2> <br>
-<form action="/register" method="POST">
+<form action="/register" method="POST" onsubmit="return check_add(this)">
     <b>Nimi:</b> <input type="text" name="username"> <br> <br>
     <b>Salasana:</b> <input type="password" name="password1"> <br> <br>
     <b>Salasana uudelleen:</b> <input type="password" name="password2"> <br> <br>
@@ -11,4 +11,23 @@
     <input type="hidden" name="csrf_token" value="{{session.csrf_token}}">
 </form>
 <br>
+
+<script>
+    const check_add= (form) => {
+        if(form.username.value.length < 4 || form.username.value.length > 20) {
+            alert("Käyttäjätunnuksen tulee olla vähintään 4 ja enintään 20 merkkiä pitkä.")
+            return false
+        }
+        if(form.password1.value.length < 8 || form.password1.value.length > 20 || form.password2.value.length < 8 || form.password2.value.length > 20) {
+            alert("Salasanan tulee olla vähintään 8 ja enintään 20 merkkiä pitkä.")
+            return false 
+        }
+        if(form.password1.value !== form.password2.value) {
+            alert("Syötä sama salasana molempiin kenttiin.")
+            return false
+        }
+        return true
+    }
+</script>
+
 {% endblock %}
