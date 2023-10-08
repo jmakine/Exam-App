@@ -14,7 +14,7 @@
                 <input type="hidden" value="{{session.user_id}}" name="id_to_delete" />
                 <input type="hidden" value="student" name="role_to_delete" />
                 <a onclick="return confirm(`Haluatko varmasti poistaa oman käyttäjätilisi?`);">
-                <input type="submit" value="Poista"/>
+                <input type="submit" class="btn btn-danger" value="Poista"/>
                 <input type="hidden" name="csrf_token" value="{{session.csrf_token}}">
             </form>
         </p>
