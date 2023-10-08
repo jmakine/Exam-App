@@ -178,6 +178,10 @@ def get_all_exams():
     exams_stats = answers.get_exams_stats()
     user_id = users.user_id()
     users_exams = answers.get_exams_and_points(user_id)
+    users_exam_time_spent = []
+    for exam in users_exams:
+        users_exam_time_spent.append(exams.get_time_spent(exam.exam_id, user_id))
+    print(users_exam_time_spent)
     started_exam_ids = []
     for exam in users_exams:
         if exam.exam_finished == None and exam.exam_started != None :
@@ -190,7 +194,8 @@ def get_all_exams():
                            exams_stats=exams_stats, 
                            users_exams=users_exams, 
                            submitted_exam_ids=submitted_exam_ids,
-                           started_exam_ids=started_exam_ids)
+                           started_exam_ids=started_exam_ids,
+                           users_exam_time_spent=users_exam_time_spent)
 
 @app.route("/exams/add", methods=["POST"])
 def add_exam():
@@ -235,9 +240,12 @@ def get_exam(exam_id):
                             questions_count=len(exams_questions), 
                             max_points=max_points.total_points)
     else:
-        exam_started = exams.start_exam(exam_id)
         user_id = users.user_id()
+        exam_started = exams.start_exam(exam_id)
         exam_finished = exams.get_timestamp_finished(exam_id, user_id)
+        time_spent = exams.get_time_spent(exam_id, user_id)
+        print('time spent in routes /exams/id: ', time_spent)
+
         answered_questions = answers.submitted_answers(exam_id, user_id)
         answered_question_ids = []
         for item in answered_questions:
@@ -257,7 +265,8 @@ def get_exam(exam_id):
                             answered_question_ids=answered_question_ids,
                             answered_questions_count=len(answered_questions),
                             total_points_received=sum(answered_question_points_received),
-                            user_id=user_id)
+                            user_id=user_id,
+                            time_spent=time_spent)
 
 @app.route("/exam/add_question", methods=["POST"])
 def add_exam_question():
