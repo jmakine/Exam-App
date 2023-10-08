@@ -3,17 +3,20 @@
 {% block content %}
 <h2>Luo tunnus</h2> <br>
 <form action="/register" method="POST" onsubmit="return check_add(this)">
-    <b>Nimi:</b> <input type="text" name="username"> <br> <br>
-    <b>Salasana:</b> <input type="password" name="password1"> <br> <br>
-    <b>Salasana uudelleen:</b> <input type="password" name="password2"> <br> <br>
+    <b>Nimi:</b> <br>
+    <input type="text" name="username"> <br> <br>
+    <b>Salasana:</b> <br>
+    <input type="password" name="password1"> <br> <br>
+    <b>Salasana uudelleen:</b> <br>
+    <input type="password" name="password2"> <br> <br>
     <input type="hidden" value="student" name="role" />
-    <input type="submit" value="Luo tunnus">
+    <input type="submit" class="btn btn-primary" value="Luo tunnus">
     <input type="hidden" name="csrf_token" value="{{session.csrf_token}}">
 </form>
 <br>
 
 <script>
-    const check_add= (form) => {
+    const check_add = (form) => {
         if(form.username.value.length < 4 || form.username.value.length > 20) {
             alert("Käyttäjätunnuksen tulee olla vähintään 4 ja enintään 20 merkkiä pitkä.")
             return false
