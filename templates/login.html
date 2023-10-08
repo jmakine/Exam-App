@@ -3,9 +3,11 @@
 {% block content %}
 <h2>Kirjaudu sisään</h2> <br>
 <form action="/login" method="POST">
-    <b>Käyttäjänimi:</b> <input type="text" name="username"> <br> <br>
-    <b>Salasana:</b> <input type="password" name="password"> <br> <br>
-    <input type="submit" value="Kirjaudu">
+    <b>Käyttäjänimi:</b> <br>
+    <input type="text" name="username"> <br> <br>
+    <b>Salasana:</b> <br>
+    <input type="password" name="password"> <br> <br>
+    <input type="submit" class="btn btn-primary" value="Kirjaudu">
 </form>
 <br>
 {% endblock %}
