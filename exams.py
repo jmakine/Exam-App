@@ -90,7 +90,7 @@ def remove_question(exam_id, question_id):
 
 def get_exam_stats():
     try:
-        sql = "SELECT u.id as user_id, u.username, s.name as subject_name, e.id as exam_id, e.name as exam_name, exams_total_points.total_points as max_points, TO_CHAR(ue.exam_finished, 'YYYY/MM/DD HH24:MM:SS') as exam_finished, ue.total_score as points_received \
+        sql = "SELECT u.id as user_id, u.username, s.name as subject_name, e.id as exam_id, e.name as exam_name, exams_total_points.total_points as max_points, TO_CHAR(ue.exam_finished, 'YYYY/MM/DD HH24:MM:SS') as exam_finished, ue.total_score as points_received, ue.time_spent \
             FROM users u LEFT JOIN users_exams ue ON ue.user_id=u.id \
                 LEFT JOIN exams e ON e.id=ue.exam_id \
                     INNER JOIN subjects s ON s.id=e.subject_id \
@@ -105,8 +105,8 @@ def get_exam_stats():
 def get_timestamp_started(exam_id, user_id):
     sql = "SELECT exam_started from users_exams \
         WHERE (user_id, exam_id) = (:user_id, :exam_id);"
-    timestamp = db.session.execute(text(sql), {"exam_id":exam_id, "user_id":user_id}).fetchone()
-    exam_started = timestamp[0].strftime("%c")
+    exam_started = db.session.execute(text(sql), {"exam_id":exam_id, "user_id":user_id}).fetchone()
+    exam_started = exam_started[0].strftime("%c")
     return exam_started
 
 def start_exam(exam_id):
@@ -132,14 +132,44 @@ def get_timestamp_finished(exam_id, user_id):
         exam_finished = exam_finished.strftime("%c")
     return exam_finished
 
+def get_time_spent(exam_id, user_id):
+    sql_started = "SELECT exam_started from users_exams \
+        WHERE (user_id, exam_id) = (:user_id, :exam_id);"
+    exam_started = db.session.execute(text(sql_started), {"exam_id":exam_id, "user_id":user_id}).fetchone()
+    exam_started = exam_started[0]
+
+    sql_finished = "SELECT exam_finished from users_exams \
+        WHERE (user_id, exam_id) = (:user_id, :exam_id);"
+    exam_finished = db.session.execute(text(sql_finished), {"exam_id":exam_id, "user_id":user_id}).fetchone()
+    exam_finished = exam_finished[0]
+    time_spent = 0
+    if exam_finished != None:
+        time_spent = exam_finished - exam_started
+        seconds_in_day = 24*60*60
+        time_spent = divmod(time_spent.days * seconds_in_day + time_spent.seconds, 60)
+    return time_spent
+
 def end_exam(user_id, exam_id, total_score, exam_finished):
     try:
-        sql = "UPDATE users_exams \
+        sql_end = "UPDATE users_exams \
             SET exam_finished = (CASE WHEN b.count=0 THEN current_timestamp ELSE exam_finished END), \
                 total_score = (CASE WHEN b.count=0 THEN :total_score ELSE total_score END) \
             FROM (SELECT COUNT(*) as count FROM users_exams WHERE exam_id=:exam_id AND user_id=:user_id AND exam_finished IS NOT NULL) b \
             WHERE user_id=:user_id AND exam_id=:exam_id;"
-        db.session.execute(text(sql), {"exam_id":exam_id, "user_id":user_id, "total_score":total_score, "exam_finished":exam_finished})
+        db.session.execute(text(sql_end), {"exam_id":exam_id, "user_id":user_id, "total_score":total_score, "exam_finished":exam_finished})
         db.session.commit()
+    
+        try:
+            time_spent = get_time_spent(exam_id, user_id)
+            print('time_spent in exams.py end_exam: ', type(list(time_spent)), list(time_spent))
+            time_spent = list(time_spent)
+            sql_add_time_spent = "UPDATE users_exams \
+                SET time_spent=:time_spent \
+                WHERE user_id=:user_id AND exam_id=:exam_id;"
+            db.session.execute(text(sql_add_time_spent), {"exam_id":exam_id, "user_id":user_id, "time_spent":time_spent})
+            db.session.commit()
+        except:
+            return False
     except:
         return False
+    
