@@ -17,6 +17,38 @@
     <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
 </form>
 
+<hr>
+
+{% for user in users %}
+<b>Nimi:</b> {{ user.username }} <br>
+<b>Rooli:</b> 
+    {% if user.role == "student" %} Oppilas 
+    {% else %} Opettaja {% endif %} <br>
+
+    {% if session.user_id == user.id %}
+    <p>
+        <form action="/users/delete" method="POST">
+            <input type="hidden" value="{{user.id}}" name="id_to_delete" />
+            <a onclick="return confirm(`Haluatko varmasti poistaa oman käyttäjätilisi?`);">
+            <input type="submit" class="btn btn-danger" value="Poista"/>
+            <input type="hidden" name="csrf_token" value="{{session.csrf_token}}">
+        </form>
+    </p>
+    {% else %}
+    <p>
+        <form action="/users/delete" method="POST">
+            <input type="hidden" value="{{user.id}}" name="id_to_delete" />
+            <a onclick="return confirm(`Haluatko varmasti poistaa käyttäjän?`);">
+            <input type="submit" class="btn btn-outline-danger" value="Poista"/>
+            <input type="hidden" name="csrf_token" value="{{session.csrf_token}}">
+        </form>
+    </p>
+    {% endif %}
+<hr>
+{% endfor %}
+{% endblock %}
+
+{% block scripts %}
 <script>
     const check_add = (form) => {
         if(form.username.value.length < 4 || form.username.value.length > 20) {
@@ -30,35 +62,4 @@
         return true
     }
 </script>
-<hr>
-
-{% for user in users %}
-<b>Nimi:</b> {{ user.username }} <br>
-<b>Rooli:</b> 
-    {% if user.role == "student" %} Oppilas 
-    {% else %} Opettaja {% endif %} <br>
-
-    {% if session.user_id == user.id %}
-    <p>
-        <form action="/users/delete" method="POST">
-            <input type="hidden" value="{{user.id}}" name="id_to_delete" />
-            <input type="hidden" value="{{user.role}}" name="role_to_delete" />
-            <a onclick="return confirm(`Haluatko varmasti poistaa oman käyttäjätilisi?`);">
-            <input type="submit" class="btn btn-danger" value="Poista"/>
-            <input type="hidden" name="csrf_token" value="{{session.csrf_token}}">
-        </form>
-    </p>
-    {% else %}
-    <p>
-        <form action="/users/delete" method="POST">
-            <input type="hidden" value="{{user.id}}" name="id_to_delete" />
-            <input type="hidden" value="{{user.role}}" name="role_to_delete" />
-            <a onclick="return confirm(`Haluatko varmasti poistaa käyttäjän?`);">
-            <input type="submit" class="btn btn-outline-danger" value="Poista"/>
-            <input type="hidden" name="csrf_token" value="{{session.csrf_token}}">
-        </form>
-    </p>
-    {% endif %}
-<hr>
-{% endfor %}
 {% endblock %}
