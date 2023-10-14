@@ -10,39 +10,20 @@
 </i></h6>
 <hr>
 
-{% if session.role == "teacher" %}
 <h3>Lisää uusi kysymys:</h3>
 <form action="/questions/add" method="POST" onsubmit="check_add(this)">
     <input type="hidden" value="/subjects/{{subject.id}}/questions" name="path" />
     <input type="hidden" value="{{subject.id}}" name="subject_id" />
     <b> Kysymys: </b> <br>
-    <textarea name="question" rows="4" cols="30"></textarea> <br>
+    <textarea name="question" rows="4" cols="30" required></textarea> <br>
     <b> Vastaus: </b> <br>
-    <input type="text" name="answer"> <br>
+    <input type="text" name="answer" required> <br>
     <b> Pisteet: </b> <br>
-    <input type="number" name="points"> <br> <br>
+    <input type="number" name="points" required> <br> <br>
     <input type="submit" class="btn btn-primary" value="Lisää">
     <input type="hidden" name="csrf_token" value="{{session.csrf_token}}">
 </form>
 <hr>
-
-<script>
-    const check_add = (form) => {
-        if(form.question.value.length > 200) {
-            alert("Kysymys saa olla enintään 200 merkkiä pitkä.")
-            return false
-        }
-        if(form.answer.value.length > 20) {
-            alert("Vastaus saa olla enintään 20 merkkiä pitkä.")
-            return false
-        }
-        if(form.points.value < 0) {
-            alert("Pisteet eivät saa olla alle 0.")
-            return false 
-        }
-        return true
-    }
-</script>
 
 {% for question in questions %}
 <p>
@@ -63,5 +44,28 @@
 </p>
 <hr>
 {% endfor %}
-{% endif %}
+{% endblock %}
+
+{% block scripts %}
+<script>
+    const check_add = (form) => {
+        if(form.question.value.length > 200) {
+            alert("Kysymys saa olla enintään 200 merkkiä pitkä.")
+            return false
+        }
+        if(form.answer.value.length > 20) {
+            alert("Vastaus saa olla enintään 20 merkkiä pitkä.")
+            return false
+        }
+        if(form.points.value < 0) {
+            alert("Pisteet eivät saa olla alle 0.")
+            return false 
+        }
+        if(form.points.value > 10) {
+            alert("Pisteet eivät saa olla yli 10.")
+            return false 
+        }
+        return true
+    }
+</script>
 {% endblock %}
