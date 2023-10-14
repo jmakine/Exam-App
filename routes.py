@@ -35,7 +35,6 @@ def register():
     if request.method == "GET":
         return render_template("register.html")
     if request.method == "POST":
-        users.check_csrf()
         username = request.form["username"]
         password1 = request.form["password1"]
         password2 = request.form["password2"]
@@ -46,9 +45,9 @@ def register():
         else:
             return redirect("/register")
 
-@app.route("/users", methods=["GET"])
+@app.route("/users")
 def get_users():
-    if users.user_role() == 'teacher':
+    if users.user_id() and users.user_role() == 'teacher':
         result = users.get_users()
         return render_template("users.html", users=result)
     else: 
@@ -56,7 +55,7 @@ def get_users():
     
 @app.route("/users_table")
 def get_exam_stats():
-    if users.user_role() == 'teacher':
+    if users.user_id() and users.user_role() == 'teacher':
         stats_by_user = exams.get_exam_stats()
         return render_template("users_table.html", stats=stats_by_user)
     else: 
@@ -64,8 +63,8 @@ def get_exam_stats():
 
 @app.route("/users/add", methods=["POST"])
 def add_user():
-    if users.user_role() == 'teacher':
-        users.check_csrf()
+    users.check_csrf()
+    if users.user_id() and users.user_role() == 'teacher':
         username = request.form["username"]
         password = request.form["password"]
         role = request.form["role"]
@@ -79,9 +78,9 @@ def add_user():
 
 @app.route("/users/delete", methods=["POST"])
 def delete_user():
-    id_to_delete = int(request.form["id_to_delete"])
-    role_to_delete = request.form["role_to_delete"]
     users.check_csrf()
+    id_to_delete = int(request.form["id_to_delete"])
+    role_to_delete = users.get_user(id_to_delete).role
 
     if users.user_role() == 'teacher':        
         if users.teacher_count() > 1 and users.user_id() == id_to_delete:
@@ -92,16 +91,18 @@ def delete_user():
             return redirect("/users")
         else:
             return render_template("error.html", message="Et voi poistaa ainutta opettajaa")
+    
     elif users.user_role() == 'student':
         if users.user_id() == id_to_delete:
             users.delete_user(id_to_delete)
             return redirect("/logout")
+    
     else:
         return redirect("/")
 
-@app.route("/subjects", methods=["GET"])
+@app.route("/subjects")
 def get_subjects():
-    if users.user_role() == 'teacher':
+    if users.user_id() and users.user_role() == 'teacher':
         result = subjects.get_subjects()
         return render_template("subjects.html", subjects=result)
     else:
@@ -109,8 +110,8 @@ def get_subjects():
 
 @app.route("/subjects/add", methods=["POST"])
 def add_subject():
-    if users.user_role() == 'teacher':
-        users.check_csrf()
+    users.check_csrf()
+    if users.user_id() and users.user_role() == 'teacher':
         name = request.form["name"]
         if subjects.subjectname_exists(name) == True:
             return render_template("error.html", message="Tämän niminen aihealue on jo olemassa")
@@ -118,29 +119,31 @@ def add_subject():
             subjects.add_subject(name)    
             return redirect("/subjects")
     else:
-        return redirect("/subjects")
+        return redirect("/")
 
 @app.route("/subjects/delete", methods=["POST"])
 def delete_subject():
-    if users.user_role() == 'teacher':
-        users.check_csrf()
+    users.check_csrf()
+    if users.user_id() and users.user_role() == 'teacher':
         id = request.form["id"]
         subjects.delete_subject(int(id))
-    return redirect("/subjects")
+        return redirect("/subjects")
+    else:
+        return redirect("/")
             
 @app.route("/subjects/<int:subject_id>/questions")
 def get_questions(subject_id):
-    if users.user_role() == 'teacher':
+    if users.user_id() and users.user_role() == 'teacher':
         subject = subjects.get_subject(subject_id)
         subject_questions = questions.get_questions(subject_id)
         return render_template("questions.html", questions=subject_questions, subject=subject)
     else:
-        return redirect("/subjects/<int:subject_id>")
+        return redirect("/")
 
 @app.route("/questions/add", methods=["POST"])
 def add_question():
-    if users.user_role() == 'teacher':
-        users.check_csrf()
+    users.check_csrf()
+    if users.user_id() and users.user_role() == 'teacher':
         path=request.form["path"]
         subject_id=request.form["subject_id"]
         question=request.form["question"]
@@ -153,8 +156,8 @@ def add_question():
 
 @app.route("/questions/delete", methods=["POST"])
 def delete_question():
-    if users.user_role() == 'teacher':
-        users.check_csrf()
+    users.check_csrf()
+    if users.user_id() and users.user_role() == 'teacher':
         path=request.form["path"]
         question_id=request.form["question_id"]
         questions.delete_question(question_id)
@@ -164,43 +167,47 @@ def delete_question():
 
 @app.route("/subjects/<int:subject_id>/exams")
 def get_exams(subject_id):
-    subject = subjects.get_subject(subject_id)
-    subject_exams = exams.get_exams(subject_id)
-    user_id = users.user_id()
-    users_completed_exams = answers.get_exams_and_points(user_id)
-    completed_exam_ids = []
-    for exam in users_completed_exams:
-        completed_exam_ids.append(exam.exam_id)
-    return render_template("exams.html", subject=subject, exams=subject_exams, completed_exam_ids=completed_exam_ids)
+    if users.user_id() and users.user_role() == 'teacher':
+        subject = subjects.get_subject(subject_id)
+        subject_exams = exams.get_exams(subject_id)
+        return render_template("exams.html", exams=subject_exams, subject=subject)
+    else:
+        redirect("/")
 
 @app.route("/exams")
 def get_all_exams():
-    exams_stats = answers.get_exams_stats()
-    user_id = users.user_id()
-    users_exams = answers.get_exams_and_points(user_id)
-    users_exam_time_spent = []
-    for exam in users_exams:
-        users_exam_time_spent.append(exams.get_time_spent(exam.exam_id, user_id))
-    print(users_exam_time_spent)
-    started_exam_ids = []
-    for exam in users_exams:
-        if exam.exam_finished == None and exam.exam_started != None :
-            started_exam_ids.append(exam.exam_id)
-    submitted_exam_ids = []
-    for exam in users_exams:
-        if exam.exam_finished != None:
-            submitted_exam_ids.append(exam.exam_id)
-    return render_template("exams_table.html", 
-                           exams_stats=exams_stats, 
-                           users_exams=users_exams, 
-                           submitted_exam_ids=submitted_exam_ids,
-                           started_exam_ids=started_exam_ids,
-                           users_exam_time_spent=users_exam_time_spent)
+    if users.user_id():
+        exams_stats = answers.get_exams_stats()
+        user_id = users.user_id()
+        users_exams = answers.get_exams_and_points(user_id)
+
+        users_exam_time_spent = []
+        for exam in users_exams:
+            users_exam_time_spent.append(exams.get_time_spent(exam.exam_id, user_id))
+
+        started_exam_ids = []
+        for exam in users_exams:
+            if exam.exam_finished == None and exam.exam_started != None :
+                started_exam_ids.append(exam.exam_id)
+        
+        submitted_exam_ids = []
+        for exam in users_exams:
+            if exam.exam_finished != None:
+                submitted_exam_ids.append(exam.exam_id)
+        
+        return render_template("exams_table.html", 
+                            exams_stats=exams_stats, 
+                            users_exams=users_exams, 
+                            submitted_exam_ids=submitted_exam_ids,
+                            started_exam_ids=started_exam_ids,
+                            users_exam_time_spent=users_exam_time_spent)
+    else:
+        redirect("/")
 
 @app.route("/exams/add", methods=["POST"])
 def add_exam():
-    if users.user_role() == 'teacher':
-        users.check_csrf()
+    users.check_csrf()
+    if users.user_id() and users.user_role() == 'teacher':
         path=request.form["path"]
         subject_id=request.form["subject_id"]
         name=request.form["name"]
@@ -215,8 +222,8 @@ def add_exam():
 
 @app.route("/exams/delete", methods=["POST"])
 def delete_exam():
-    if users.user_role() == 'teacher':
-        users.check_csrf()
+    users.check_csrf()
+    if users.user_id() and users.user_role() == 'teacher':
         path=request.form["path"]
         exam_id=request.form["exam_id"]
         exams.delete_exam(exam_id)
@@ -226,52 +233,58 @@ def delete_exam():
 
 @app.route("/exams/<int:exam_id>")
 def get_exam(exam_id):
-    exam=exams.get_exam(exam_id)
-    max_points = exams.exams_total_points(exam_id)
-    exams_questions=exams.get_exam_questions_and_answers(exam_id)
+    if users.user_id():
+        exam=exams.get_exam(exam_id)
+        max_points = exams.exams_total_points(exam_id)
+        exams_questions=exams.get_exam_questions_and_answers(exam_id)
 
-    if users.user_role() == 'teacher':
-        available_questions=exams.get_available_questions(exam_id)        
-        return render_template("modify_exam.html", 
-                            exam=exam, 
-                            exams_questions=exams_questions, 
-                            available_questions=available_questions, 
-                            available_questions_count=len(available_questions), 
-                            questions_count=len(exams_questions), 
-                            max_points=max_points.total_points)
+        if users.user_role() == 'teacher':
+            available_questions=exams.get_available_questions(exam_id)        
+            return render_template("modify_exam.html", 
+                                exam=exam, 
+                                exams_questions=exams_questions, 
+                                available_questions=available_questions, 
+                                available_questions_count=len(available_questions), 
+                                questions_count=len(exams_questions), 
+                                max_points=max_points.total_points)
+        
+        elif users.user_role() == 'student':
+            user_id = users.user_id()
+            exam_started = exams.start_exam(exam_id)
+            exam_finished = exams.get_timestamp_finished(exam_id, user_id)
+            time_spent = exams.get_time_spent(exam_id, user_id)
+            
+            answered_questions = answers.submitted_answers(exam_id, user_id)
+            answered_question_ids = []
+            for item in answered_questions:
+                answered_question_ids.append(item.question_id)
+            answered_question_points_received = []
+            for item in answered_questions:
+                answered_question_points_received.append(item.points_received)
+
+            return render_template("perform_exam.html",
+                                exam=exam, 
+                                exam_finished=exam_finished,
+                                exams_questions=exams_questions, 
+                                questions_count=len(exams_questions), 
+                                max_points=max_points.total_points,
+                                exam_started=exam_started,
+                                answers=answered_questions,
+                                answered_question_ids=answered_question_ids,
+                                answered_questions_count=len(answered_questions),
+                                total_points_received=sum(answered_question_points_received),
+                                user_id=user_id,
+                                time_spent=time_spent)
+
+        else:
+            redirect("/")
     else:
-        user_id = users.user_id()
-        exam_started = exams.start_exam(exam_id)
-        exam_finished = exams.get_timestamp_finished(exam_id, user_id)
-        time_spent = exams.get_time_spent(exam_id, user_id)
-        print('time spent in routes /exams/id: ', time_spent)
-
-        answered_questions = answers.submitted_answers(exam_id, user_id)
-        answered_question_ids = []
-        for item in answered_questions:
-            answered_question_ids.append(item.question_id)
-        answered_question_points_received = []
-        for item in answered_questions:
-            answered_question_points_received.append(item.points_received)
-
-        return render_template("perform_exam.html",
-                            exam=exam, 
-                            exam_finished=exam_finished,
-                            exams_questions=exams_questions, 
-                            questions_count=len(exams_questions), 
-                            max_points=max_points.total_points,
-                            exam_started=exam_started,
-                            answers=answered_questions,
-                            answered_question_ids=answered_question_ids,
-                            answered_questions_count=len(answered_questions),
-                            total_points_received=sum(answered_question_points_received),
-                            user_id=user_id,
-                            time_spent=time_spent)
+        redirect("/")
 
 @app.route("/exam/add_question", methods=["POST"])
 def add_exam_question():
-    if users.user_role() == 'teacher':
-        users.check_csrf()
+    users.check_csrf()
+    if users.user_id() and users.user_role() == 'teacher':
         path=request.form["path"]
         exam_id=request.form["exam_id"]
         question=request.form["question"]
@@ -283,8 +296,8 @@ def add_exam_question():
 
 @app.route("/exam/remove_question", methods=["POST"])
 def remove_exam_question():
-    if users.user_role() == 'teacher':
-        users.check_csrf()
+    users.check_csrf()
+    if users.user_id() and users.user_role() == 'teacher':
         path=request.form["path"]
         exam_id=request.form["exam_id"]
         question_id=request.form["question_id"]
@@ -295,8 +308,8 @@ def remove_exam_question():
 
 @app.route("/exam/answer_question", methods=["POST"])
 def submit_answer():
-    if users.user_role() == 'student':
-        users.check_csrf()
+    users.check_csrf()
+    if users.user_id() and users.user_role() == 'student':
         path=request.form["path"]
         exam_id=request.form["exam_id"]
         question_id=request.form["question_id"]
@@ -308,8 +321,8 @@ def submit_answer():
 
 @app.route("/exam/submit", methods=["POST"])
 def submit_exam():
-    if users.user_role() == 'student':
-        users.check_csrf()
+    users.check_csrf()
+    if users.user_id() and users.user_role() == 'student':
         user_id = users.user_id()
         path=request.form["path"]
         exam_id=request.form["exam_id"]
