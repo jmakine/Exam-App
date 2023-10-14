@@ -88,6 +88,7 @@ def logout():
     del session["user_id"]
     del session["role"]
     del session["username"]
+    del session["csrf_token"]
 
 def user_id():
     return session.get("user_id",0)
@@ -96,5 +97,5 @@ def user_role():
     return session.get("role",0)
 
 def check_csrf():
-    if session["csrf_token"] != request.form["csrf_token"]:
+    if session.get("csrf_token",0) != request.form["csrf_token"]:
         abort(403)
