@@ -5,20 +5,40 @@
 <b>Aihealue:</b> {{ subject.name }}
 <hr>
 
-{% if session.role == "teacher" %}
 <h3>Luo uusi koe:</h3>
 <form action="/exams/add" method="POST" onsubmit="return check_add(this)">
     <input type="hidden" value="/subjects/{{subject.id}}/exams" name="path" />
-    <input type="hidden" value="{{subject.id}}" name="subject_id" />
+    <input type="hidden" value="{{subject.id}}" name="subject_id"/>
     <b> Kokeen nimi: </b> <br>
-    <input type="text" name="name"> <br> <br>
+    <input type="text" name="name" required> <br> <br>
     <b> Aikaraja (minuuttia): </b> <br>
-    <input type="number" name="timelimit"> <br> <br>
+    <input type="number" name="timelimit" required> <br> <br>
     <input type="submit" class="btn btn-primary" value="Lisää">
     <input type="hidden" name="csrf_token" value="{{session.csrf_token}}">
 </form>
 <hr>
 
+{% for exam in exams %}
+<h3>{{ exam.exam_name }}</h3>
+<p> <b>Aikaraja: </b> {{ exam.time_limit_minutes }} minuuttia
+<p> <b>Kysymyksiä: </b> {{ exam.total_questions}}
+<p> <b>Maksimipisteet: </b> {% if exam.max_points == None %} - {% else %} {{exam.max_points}} {% endif %}
+
+<p> <a href="/exams/{{exam.exam_id}}">Lisää tai poista kysymyksiä</a>
+<p>
+    <form action="/exams/delete" method="POST">
+        <input type="hidden" value="/subjects/{{exams[0].subject_id}}/exams" name="path" />
+        <input type="hidden" value="{{exam.exam_id}}" name="exam_id" />
+        <input type="submit" class="btn btn-danger" value="Poista" 
+        onclick="return confirm('Kokeen poistaminen poistaa sen myös kaikista tilastoista. Haluatko varmasti poistaa kokeen?');"/>
+        <input type="hidden" name="csrf_token" value="{{session.csrf_token}}">
+    </form>
+</p>
+<hr>
+{% endfor %}
+{% endblock %}
+
+{% block scripts %}
 <script>
     const check_add = (form) => {
         if(form.name.value.length < 4 || form.name.value.length > 30) {
@@ -29,36 +49,11 @@
             alert("Aikarajan tulee olla vähintään 1 min.")
             return false 
         }
+        if(form.timelimit.value > 2147483647) {
+            alert("Aikaraja saa olla enintään 460 min (8h).")
+            return false 
+        }
         return true
     }
 </script>
-
-{% endif %}
-
-{% for exam in exams %}
-<h3>{{ exam.exam_name }}</h3>
-<p> <b>Aikaraja: </b> {{ exam.time_limit_minutes }} minuuttia
-<p> <b>Kysymyksiä: </b> {{ exam.total_questions}}
-<p> <b>Maksimipisteet: </b> {% if exam.max_points == None %} - {% else %} {{exam.max_points}} {% endif %}
-
-{% if session.role == "student" and exam.exam_id not in completed_exam_ids %}
-<p> <a href="/exams/{{exam.exam_id}}" 
-    onclick="return confirm(`Haluatko varmasti aloittaa kokeen? Painamalla 'ok', kokeen suoritusaika alkaa.`);">
-    <b> Aloita koe </b> </a>
-{% endif %}
-
-{% if session.role == "teacher" %}
-<p> <a href="/exams/{{exam.exam_id}}">Lisää tai poista kysymyksiä</a>
-<p>
-    <form action="/exams/delete" method="POST">
-        <input type="hidden" value="/subjects/{{subject.id}}/exams" name="path" />
-        <input type="hidden" value="{{exam.exam_id}}" name="exam_id" />
-        <input type="submit" class="btn btn-danger" value="Poista" 
-        onclick="return confirm('Kokeen poistaminen poistaa sen myös kaikista tilastoista. Haluatko varmasti poistaa kokeen?');"/>
-        <input type="hidden" name="csrf_token" value="{{session.csrf_token}}">
-    </form>
-</p>
-{% endif %}
-<hr>
-{% endfor %}
 {% endblock %}
