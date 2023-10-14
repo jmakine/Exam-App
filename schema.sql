@@ -1,3 +1,12 @@
+DROP TABLE IF EXISTS users_answers;
+DROP TABLE IF EXISTS users_exams;
+DROP TABLE IF EXISTS exams_questions;
+DROP TABLE IF EXISTS exams;
+DROP TABLE IF EXISTS questions;
+DROP TABLE IF EXISTS subjects;
+DROP TABLE IF EXISTS users;
+DROP TYPE IF EXISTS role_type;
+
 CREATE TYPE role_type AS ENUM ('student', 'teacher');
 
 CREATE TABLE users (
@@ -9,7 +18,7 @@ CREATE TABLE users (
 
 CREATE TABLE subjects (
     id SERIAL PRIMARY KEY,
-    name VARCHAR(20) UNIQUE NOT NULL CHECK(LENGTH(name) >= 5)
+    name VARCHAR(30) UNIQUE NOT NULL CHECK(LENGTH(name) >= 5)
 );
 
 CREATE TABLE questions (
@@ -17,13 +26,13 @@ CREATE TABLE questions (
     subject_id INTEGER REFERENCES subjects ON DELETE CASCADE,
     question VARCHAR(200) UNIQUE NOT NULL,
     answer VARCHAR(20) NOT NULL,
-    points INTEGER NOT NULL CHECK(points > -1)
+    points INTEGER NOT NULL CHECK(points > -1 AND points < 11)
 );
 
 CREATE TABLE exams ( 
     id SERIAL PRIMARY KEY,
     name VARCHAR(30) UNIQUE NOT NULL CHECK(LENGTH(name) > 4),
-    time_limit_minutes INTEGER NOT NULL CHECK(time_limit_minutes > 0),
+    time_limit_minutes INTEGER NOT NULL CHECK(time_limit_minutes > 0 AND time_limit_minutes < 481),
     subject_id INTEGER REFERENCES subjects ON DELETE CASCADE
 );
 
