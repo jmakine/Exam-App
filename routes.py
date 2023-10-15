@@ -1,5 +1,5 @@
 from app import app
-from flask import render_template, request, redirect
+from flask import render_template, request, redirect, flash, get_flashed_messages
 from datetime import datetime
 import users
 import subjects
@@ -17,17 +17,21 @@ def index():
 def login():
     if request.method == "GET":
         return render_template("login.html")
+    
     if request.method == "POST":
         username = request.form["username"]
         password = request.form["password"]
         if users.login(username, password):
+            flash('Kirjautuminen onnistui!', 'success')
             return redirect("/")
         else:
-            return render_template("error.html", message="Väärä tunnus tai salasana")
+            flash('Väärä käyttäjätunnus tai salasana!', 'danger')
+            return redirect(request.url)
 
 @app.route("/logout")
 def logout():
     users.logout()
+    flash('Olet kirjautunut ulos.', 'primary')    
     return redirect("/")
 
 @app.route("/register", methods=["GET", "POST"])
@@ -39,11 +43,26 @@ def register():
         password1 = request.form["password1"]
         password2 = request.form["password2"]
         if users.username_exists(username) == True:
-            return render_template("error.html", message="Käyttäjänimi varattu")
-        if password1 == password2 and users.register(username, password1):
-            return redirect("/")
-        else:
-            return redirect("/register")
+            flash('Käyttäjänimi varattu.', 'danger')
+            return redirect(request.url)
+        if len(username) < 4:
+            flash('Käyttäjätunnuksen on oltava vähintään 4 merkkiä pitkä.', 'danger')
+            return redirect(request.url)
+        if len(username) > 20:
+            flash('Käyttäjätunnus ei saa olla yli 20 merkkiä pitkä.', 'danger')
+            return redirect(request.url)
+        if len(password1) < 8:
+            flash('Salasanan on oltava vähintään 8 merkkiä pitkä.', 'danger')
+            return redirect(request.url)
+        if len(password1) > 20:
+            flash('Salasana ei saa olla yli 20 merkkiä pitkä.', 'danger')
+            return redirect(request.url)
+        if password1 != password2:
+            flash('Syötä sama salasana molempiin kenttiin.', 'danger')
+            return redirect(request.url)
+        users.register(username, password1)
+        flash('Rekisteröinti onnistui! Tervetuloa!', 'success')
+        return redirect("/")
 
 @app.route("/users")
 def get_users():
@@ -69,9 +88,23 @@ def add_user():
         password = request.form["password"]
         role = request.form["role"]
         if users.username_exists(username) == True:
-            return render_template("error.html", message="Käyttäjänimi varattu")
+            flash('Käyttäjänimi varattu.', 'danger')
+            return redirect("/users")
+        if len(username) < 4:
+            flash('Käyttäjätunnuksen on oltava vähintään 4 merkkiä pitkä.', 'danger')
+            return redirect("/users")
+        if len(username) > 20:
+            flash('Käyttäjätunnus ei saa olla yli 20 merkkiä pitkä.', 'danger')
+            return redirect("/users")
+        if len(password) < 8:
+            flash('Salasanan on oltava vähintään 8 merkkiä pitkä.', 'danger')
+            return redirect("/users")
+        if len(password) > 20:
+            flash('Salasana ei saa olla yli 20 merkkiä pitkä.', 'danger')
+            return redirect("/users")
         else:
-            users.add_user(username, password, role)    
+            users.add_user(username, password, role)
+            flash('Käyttäjä lisätty.', 'success')
             return redirect("/users")
     else:
         return redirect("/")
@@ -79,24 +112,30 @@ def add_user():
 @app.route("/users/delete", methods=["POST"])
 def delete_user():
     users.check_csrf()
-    id_to_delete = int(request.form["id_to_delete"])
-    role_to_delete = users.get_user(id_to_delete).role
+    id_to_delete = request.form["id_to_delete"]
+    role_to_delete = users.get_user(id_to_delete)[2]
 
     if users.user_role() == 'teacher':        
-        if users.teacher_count() > 1 and users.user_id() == id_to_delete:
+        if users.teacher_count() > 1 and users.user_id() == int(id_to_delete):
             users.delete_user(id_to_delete)
-            return redirect("/logout")
+            flash('Käyttäjätilisi on poistettu.', 'primary')
+            users.logout()
+            return redirect("/")
         elif users.teacher_count() > 1 or (users.teacher_count() == 1 and role_to_delete == 'student'):
             users.delete_user(id_to_delete)
+            flash('Käyttäjätili poistettu.', 'success')
             return redirect("/users")
         else:
-            return render_template("error.html", message="Et voi poistaa ainutta opettajaa")
-    
+            flash('Et voi poistaa ainutta opettajaa!', 'danger')
+            return redirect("/users")
+
     elif users.user_role() == 'student':
-        if users.user_id() == id_to_delete:
+        if users.user_id() == int(id_to_delete):
             users.delete_user(id_to_delete)
-            return redirect("/logout")
-    
+            flash('Käyttäjätilisi on poistettu.', 'primary')
+            users.logout()
+            return redirect("/")
+
     else:
         return redirect("/")
 
