@@ -4,10 +4,10 @@
 <h2>Käyttäjät</h2>
 <hr>
 
-<form action="/users/add" method="POST" onsubmit="return check_add(this)">
+<form action="/users/add" method="POST">
     <h3>Lisää käyttäjä:</h3>
-    <b>Nimi: </b><input type="text" name="username"> <br> <br>
-    <b>Salasana: </b><input type="password" name="password"> <br> <br>
+    <b>Nimi: </b><input type="text" name="username" required> <br> <br>
+    <b>Salasana: </b><input type="password" name="password" required> <br> <br>
     <b>Rooli: </b>
     <select name="role">
         <option value="student">Oppilas</option>
@@ -30,7 +30,7 @@
         <form action="/users/delete" method="POST">
             <input type="hidden" value="{{user.id}}" name="id_to_delete" />
             <a onclick="return confirm(`Haluatko varmasti poistaa oman käyttäjätilisi?`);">
-            <input type="submit" class="btn btn-danger" value="Poista"/>
+            <input type="submit" class="btn btn-danger" value="Poista oma käyttäjätili"/>
             <input type="hidden" name="csrf_token" value="{{session.csrf_token}}">
         </form>
     </p>
@@ -39,27 +39,11 @@
         <form action="/users/delete" method="POST">
             <input type="hidden" value="{{user.id}}" name="id_to_delete" />
             <a onclick="return confirm(`Haluatko varmasti poistaa käyttäjän?`);">
-            <input type="submit" class="btn btn-outline-danger" value="Poista"/>
+            <input type="submit" class="btn btn-danger" value="Poista"/>
             <input type="hidden" name="csrf_token" value="{{session.csrf_token}}">
         </form>
     </p>
     {% endif %}
 <hr>
 {% endfor %}
-{% endblock %}
-
-{% block scripts %}
-<script>
-    const check_add = (form) => {
-        if(form.username.value.length < 4 || form.username.value.length > 20) {
-            alert("Käyttäjätunnuksen tulee olla vähintään 4 ja enintään 20 merkkiä pitkä.")
-            return false
-        }
-        if(form.password.value.length < 8 || form.password.value.length > 20) {
-            alert("Salasanan tulee olla vähintään 8 ja enintään 20 merkkiä pitkä.")
-            return false 
-        }
-        return true
-    }
-</script>
 {% endblock %}
