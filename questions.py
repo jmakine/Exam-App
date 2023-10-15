@@ -10,7 +10,10 @@ def get_questions(subject_id):
 def get_question_id(question):
     sql = "SELECT id FROM questions WHERE question=:question"
     response = db.session.execute(text(sql), {"question":question}).fetchone()
-    return response[0]
+    if response != None:
+        return response[0]
+    else:
+        return None
 
 def count_questions(subject_id):
     return len(get_questions(subject_id))
