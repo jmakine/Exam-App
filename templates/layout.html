@@ -19,28 +19,24 @@
         <a class="navbar-brand" href="/">Etusivu</a>
         <ul class="navbar-nav">
         {% if session.role == "teacher" %}
-        <li class="nav-item">
-            <a class="nav-link" href="/subjects">Aihealueet</a>
-        </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/subjects">Aihealueet</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/exams">Koetilastot</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/users">Käyttäjät</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/users_table">Käyttäjätilastot</a>
+            </li>
         {% endif %}
         {% if session.role == "student" %}
-        <li class="nav-item">
-            <a class="nav-link" href="/exams">Kokeet</a>
-        </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/exams">Kokeet</a>
+            </li>
         {% endif %}
-        {% if session.role == "teacher" %}
-        <li class="nav-item">
-            <a class="nav-link" href="/exams">Koetilastot</a>
-        </li>
-        {% endif %}
-        {% if session.role == "teacher" %}
-        <li class="nav-item">
-            <a class="nav-link" href="/users">Käyttäjät</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" href="/users_table">Käyttäjätilastot</a>
-        </li>
-        {% endif %}        
         </ul>
     </nav>
 
@@ -50,10 +46,35 @@
     <a href="/register">Luo tunnus</a>
 {% endif %}
 <hr>
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        {% for category, message in messages %}
+        <div id="flash-messages" class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+            <span>{{ message }}</span>
+            
+        </div>
+        {% endfor %}
+    {% endif %}
+{% endwith %}
+
+<script>
+    const hideFlashMessage = () => {
+        const flashMessages = document.getElementById("flash-messages");
+            if (flashMessages) {
+                setTimeout(() => {
+                    flashMessages.style.display = "none";
+                }, 3000);
+            }
+        }
+    window.addEventListener("load", hideFlashMessage);
+</script>
+
 {% block content %}{% endblock %}
 
 <script type="text/javascript" charset="utf8" src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.js"></script>
 <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.25/js/dataTables.bootstrap5.js"></script>
+
 {% block scripts %}{% endblock %}
 </div>
