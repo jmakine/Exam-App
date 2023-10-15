@@ -153,9 +153,17 @@ def add_subject():
     if users.user_id() and users.user_role() == 'teacher':
         name = request.form["name"]
         if subjects.subjectname_exists(name) == True:
-            return render_template("error.html", message="Tämän niminen aihealue on jo olemassa")
+            flash('Tämän niminen aihealue on jo olemassa.', 'danger')
+            return redirect("/subjects")
+        if len(name) < 5:
+            flash('Aihealueen on oltava vähintään 5 merkkiä pitkä.', 'danger')
+            return redirect("/subjects")
+        if len(name) > 30:
+            flash('Aihealue ei saa olla yli 30 merkkiä pitkä.', 'danger')
+            return redirect("/subjects")
         else:
-            subjects.add_subject(name)    
+            subjects.add_subject(name)
+            flash('Aihealue lisätty.', 'success')
             return redirect("/subjects")
     else:
         return redirect("/")
@@ -165,7 +173,8 @@ def delete_subject():
     users.check_csrf()
     if users.user_id() and users.user_role() == 'teacher':
         id = request.form["id"]
-        subjects.delete_subject(int(id))
+        subjects.delete_subject(id)
+        flash('Aihealue poistettu.', 'primary')
         return redirect("/subjects")
     else:
         return redirect("/")
