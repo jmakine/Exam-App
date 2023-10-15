@@ -15,7 +15,6 @@
 {% for subject in subjects %}
 <h3> {{ subject.name }} </h3>
 <a href="/subjects/{{subject.id}}/exams"> Kokeet </a> <br>
-{% if session.role == "teacher" %}
 <a href="/subjects/{{subject.id}}/questions"> Kysymykset </a> <br>
 <p>
     <form action="/subjects/delete" method="POST">
@@ -24,7 +23,6 @@
         <input type="hidden" name="csrf_token" value="{{session.csrf_token}}">
     </form>
 </p>
-{% endif %}
 <hr>
 {% endfor %}
 {% endblock %}
