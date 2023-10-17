@@ -6,13 +6,13 @@
 <hr>
 
 <h3>Luo uusi koe:</h3>
-<form action="/exams/add" method="POST" onsubmit="return check_add(this)">
+<form action="/exams/add" method="POST">
     <input type="hidden" value="/subjects/{{subject.id}}/exams" name="path" />
     <input type="hidden" value="{{subject.id}}" name="subject_id"/>
     <b> Kokeen nimi: </b> <br>
-    <input type="text" name="name" required> <br> <br>
+    <input type="text" name="name" placeholder="Pituus 4-30 merkkiä" required> <br> <br>
     <b> Aikaraja (minuuttia): </b> <br>
-    <input type="number" name="timelimit" required> <br> <br>
+    <input type="number" name="timelimit" placeholder="1-460" required> <br> <br>
     <input type="submit" class="btn btn-primary" value="Lisää">
     <input type="hidden" name="csrf_token" value="{{session.csrf_token}}">
 </form>
@@ -27,33 +27,13 @@
 <p> <a href="/exams/{{exam.exam_id}}">Lisää tai poista kysymyksiä</a>
 <p>
     <form action="/exams/delete" method="POST">
-        <input type="hidden" value="/subjects/{{exams[0].subject_id}}/exams" name="path" />
-        <input type="hidden" value="{{exam.exam_id}}" name="exam_id" />
+        <input type="hidden" value="/subjects/{{exams[0].subject_id}}/exams" name="path">
+        <input type="hidden" value="{{exam.exam_id}}" name="exam_id">
         <input type="submit" class="btn btn-danger" value="Poista" 
-        onclick="return confirm('Kokeen poistaminen poistaa sen myös kaikista tilastoista. Haluatko varmasti poistaa kokeen?');"/>
+            onclick="return confirm('Kokeen poistaminen poistaa sen myös kaikista tilastoista. Haluatko varmasti poistaa kokeen?');">
         <input type="hidden" name="csrf_token" value="{{session.csrf_token}}">
     </form>
 </p>
 <hr>
 {% endfor %}
-{% endblock %}
-
-{% block scripts %}
-<script>
-    const check_add = (form) => {
-        if(form.name.value.length < 4 || form.name.value.length > 30) {
-            alert("Kokeen nimen tulee olla vähintään 4 ja enintään 30 merkkiä pitkä.")
-            return false
-        }
-        if(form.timelimit.value < 1) {
-            alert("Aikarajan tulee olla vähintään 1 min.")
-            return false 
-        }
-        if(form.timelimit.value > 2147483647) {
-            alert("Aikaraja saa olla enintään 460 min (8h).")
-            return false 
-        }
-        return true
-    }
-</script>
 {% endblock %}
