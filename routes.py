@@ -22,16 +22,16 @@ def login():
         username = request.form["username"]
         password = request.form["password"]
         if users.login(username, password):
-            flash('Kirjautuminen onnistui! Tervetuloa!', 'success')
+            flash('Kirjautuminen onnistui. Tervetuloa!', 'success')
             return redirect("/")
         else:
-            flash('Väärä käyttäjätunnus tai salasana!', 'danger')
+            flash('Väärä käyttäjätunnus tai salasana', 'warning')
             return redirect(request.url)
 
 @app.route("/logout")
 def logout():
     users.logout()
-    flash('Olet kirjautunut ulos.', 'primary')    
+    flash('Olet kirjautunut ulos', 'primary')    
     return redirect("/")
 
 @app.route("/register", methods=["GET", "POST"])
@@ -46,22 +46,22 @@ def register():
             flash('Käyttäjänimi varattu.', 'warning')
             return redirect(request.url)
         if len(username) < 4:
-            flash('Käyttäjätunnuksen on oltava vähintään 4 merkkiä pitkä.', 'warning')
+            flash('Käyttäjätunnuksen on oltava vähintään 4 merkkiä pitkä', 'warning')
             return redirect(request.url)
         if len(username) > 20:
-            flash('Käyttäjätunnus ei saa olla yli 20 merkkiä pitkä.', 'warning')
+            flash('Käyttäjätunnus ei saa olla yli 20 merkkiä pitkä', 'warning')
             return redirect(request.url)
         if len(password1) < 8:
-            flash('Salasanan on oltava vähintään 8 merkkiä pitkä.', 'warning')
+            flash('Salasanan on oltava vähintään 8 merkkiä pitkä', 'warning')
             return redirect(request.url)
         if len(password1) > 20:
-            flash('Salasana ei saa olla yli 20 merkkiä pitkä.', 'warning')
+            flash('Salasana ei saa olla yli 20 merkkiä pitkä', 'warning')
             return redirect(request.url)
         if password1 != password2:
-            flash('Syötä sama salasana molempiin kenttiin.', 'warning')
+            flash('Syötä sama salasana molempiin kenttiin', 'warning')
             return redirect(request.url)
         users.register(username, password1)
-        flash('Rekisteröinti onnistui! Tervetuloa!', 'success')
+        flash('Rekisteröinti onnistui. Tervetuloa!', 'success')
         return redirect("/")
 
 @app.route("/users")
@@ -88,18 +88,18 @@ def add_user():
         password = request.form["password"]
         role = request.form["role"]
         if users.username_exists(username) == True:
-            flash('Käyttäjänimi varattu.', 'warning')
+            flash('Käyttäjänimi varattu', 'warning')
         elif len(username) < 4:
-            flash('Käyttäjätunnuksen on oltava vähintään 4 merkkiä pitkä.', 'warning')
+            flash('Käyttäjätunnuksen on oltava vähintään 4 merkkiä pitkä', 'warning')
         elif len(username) > 20:
-            flash('Käyttäjätunnus ei saa olla yli 20 merkkiä pitkä.', 'warning')
+            flash('Käyttäjätunnus saa olla enintään 20 merkkiä pitkä', 'warning')
         elif len(password) < 8:
-            flash('Salasanan on oltava vähintään 8 merkkiä pitkä.', 'warning')
+            flash('Salasanan on oltava vähintään 8 merkkiä pitkä', 'warning')
         elif len(password) > 20:
-            flash('Salasana ei saa olla yli 20 merkkiä pitkä.', 'warning')
+            flash('Salasana saa olla enintään 20 merkkiä pitkä', 'warning')
         else:
             users.add_user(username, password, role)
-            flash('Käyttäjä lisätty.', 'success')
+            flash('Käyttäjä lisätty', 'success')
         return redirect("/users")
     else:
         return redirect("/")
@@ -113,21 +113,21 @@ def delete_user():
     if users.user_role() == 'teacher':        
         if users.teacher_count() > 1 and users.user_id() == int(id_to_delete):
             users.delete_user(id_to_delete)
-            flash('Käyttäjätilisi on poistettu.', 'primary')
+            flash('Käyttäjätilisi on poistettu', 'primary')
             users.logout()
             return redirect("/")
         elif users.teacher_count() > 1 or (users.teacher_count() == 1 and role_to_delete == 'student'):
             users.delete_user(id_to_delete)
-            flash('Käyttäjätili poistettu.', 'primary')
+            flash('Käyttäjätili poistettu', 'primary')
             return redirect("/users")
         else:
-            flash('Et voi poistaa ainutta opettajaa!', 'warning')
+            flash('Et voi poistaa ainutta opettajaa', 'warning')
             return redirect("/users")
 
     elif users.user_role() == 'student':
         if users.user_id() == int(id_to_delete):
             users.delete_user(id_to_delete)
-            flash('Käyttäjätilisi on poistettu.', 'primary')
+            flash('Käyttäjätilisi on poistettu', 'primary')
             users.logout()
             return redirect("/")
 
@@ -148,14 +148,14 @@ def add_subject():
     if users.user_id() and users.user_role() == 'teacher':
         name = request.form["name"]
         if subjects.subjectname_exists(name) == True:
-            flash('Tämän niminen aihealue on jo olemassa.', 'warning')
+            flash('Tämän niminen aihealue on jo olemassa', 'warning')
         elif len(name) < 5:
-            flash('Aihealueen on oltava vähintään 5 merkkiä pitkä.', 'warning')
+            flash('Aihealueen on oltava vähintään 5 merkkiä pitkä', 'warning')
         elif len(name) > 30:
-            flash('Aihealue ei saa olla yli 30 merkkiä pitkä.', 'warning')
+            flash('Aihealue saa olla enintään 30 merkkiä pitkä', 'warning')
         else:
             subjects.add_subject(name)
-            flash('Aihealue lisätty.', 'success')
+            flash('Aihealue lisätty', 'success')
         return redirect("/subjects")
     else:
         return redirect("/")
@@ -166,7 +166,7 @@ def delete_subject():
     if users.user_id() and users.user_role() == 'teacher':
         id = request.form["id"]
         subjects.delete_subject(id)
-        flash('Aihealue poistettu.', 'primary')
+        flash('Aihealue poistettu', 'primary')
         return redirect("/subjects")
     else:
         return redirect("/")
@@ -190,18 +190,18 @@ def add_question():
         answer=request.form["answer"]
         points=request.form["points"]
         if questions.get_question_id(question) != None:
-            flash('Kysymys on jo olemassa.', 'warning')
+            flash('Tämän niminen kysymys on jo olemassa', 'warning')
         elif len(question) > 200:
-            flash('Kysymys saa olla enintään 200 merkkiä pitkä.', 'warning')
+            flash('Kysymys saa olla enintään 200 merkkiä pitkä', 'warning')
         elif len(answer) > 20:
-            flash('Vastaus saa olla enintään 20 merkkiä pitkä.', 'warning')
+            flash('Vastaus saa olla enintään 20 merkkiä pitkä', 'warning')
         elif int(points) < 0:
-            flash('Pienin sallittu pistemäärä on 0.', 'warning')
+            flash('Pienin sallittu pistemäärä on 0', 'warning')
         elif int(points) > 10:
-            flash('Suurin sallittu pistemäärä on 10.', 'warning')
+            flash('Suurin sallittu pistemäärä on 10', 'warning')
         else: 
             questions.add_question(subject_id, question, answer, points)
-            flash('Kysymys lisätty.', 'success')
+            flash('Kysymys lisätty', 'success')
         return redirect(path)
     else:
         redirect("/")
@@ -213,7 +213,7 @@ def delete_question():
         path=request.form["path"]
         question_id=request.form["question_id"]
         questions.delete_question(question_id)
-        flash('Kysymys poistettu.', 'primary')
+        flash('Kysymys poistettu', 'primary')
         return redirect(path)
     else:
         redirect("/")
@@ -266,10 +266,19 @@ def add_exam():
         name=request.form["name"]
         timelimit=request.form["timelimit"]
         if exams.examname_exists(name) == True:
-            return render_template("error.html", message="Tämän niminen koe on jo olemassa")
+            flash('Tämän niminen koe on jo olemassa', 'warning')
+        elif len(name) < 4:
+            flash('Kokeen nimen tulee olla vähintään 4 merkkiä pitkä', 'warning')
+        elif len(name) > 30:
+            flash('Kokeen nimi saa olla enintään enintään 30 merkkiä pitkä', 'warning')
+        elif int(timelimit) < 1:
+            flash('Aikarajan minimi on 1 min', 'warning')
+        elif int(timelimit) > 460:
+            flash('Aikarajan maksimi on 460 min (8 tuntia)', 'warning')
         else:
-            exams.add_exam(subject_id, name, timelimit)  
-            return redirect(path)
+            exams.add_exam(subject_id, name, timelimit)
+            flash('Koe lisätty', 'success')
+        return redirect(path)
     else:
         redirect("/")
 
@@ -280,6 +289,7 @@ def delete_exam():
         path=request.form["path"]
         exam_id=request.form["exam_id"]
         exams.delete_exam(exam_id)
+        flash('Koe poistettu', 'primary')
         return redirect(path)
     else:
         redirect("/")
@@ -343,6 +353,7 @@ def add_exam_question():
         question=request.form["question"]
         question_id=questions.get_question_id(question)
         exams.add_question(question_id, exam_id)
+        flash('Kysymys lisätty kokeelle', 'success')
         return redirect(path)
     else:
         redirect("/")
@@ -355,6 +366,7 @@ def remove_exam_question():
         exam_id=request.form["exam_id"]
         question_id=request.form["question_id"]
         exams.remove_question(exam_id, question_id)
+        flash('Kysymys poistettu kokeelta', 'primary')
         return redirect(path)
     else:
         redirect("/")
