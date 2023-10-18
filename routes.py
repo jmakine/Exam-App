@@ -379,7 +379,10 @@ def submit_answer():
         exam_id=request.form["exam_id"]
         question_id=request.form["question_id"]
         answer=request.form["answer"]
-        answers.answer_question(question_id, exam_id, answer)
+        if len(answer) > 20:
+            flash('Vastaus saa olla enintään 20 merkkiä pitkä', 'warning')
+        else: 
+            answers.answer_question(question_id, exam_id, answer)
         return redirect(path)
     else:
         redirect("/")
@@ -393,7 +396,13 @@ def submit_exam():
         exam_id=request.form["exam_id"]
         total_score=request.form["total_score"]
         exam_finished = datetime.now()
-        exams.end_exam(user_id, exam_id, total_score, exam_finished)
+        questions_count = request.form["questions_count"]
+        questions_answered = request.form["questions_answered"]
+        if questions_count == questions_answered:
+            exams.end_exam(user_id, exam_id, total_score, exam_finished)
+            flash('Koe päätetty', 'success')
+        else:
+            flash('Et ole vastannut kaikkiin koekysymyksiin', 'warning')
         return redirect(path)
     else:
         redirect("/")
