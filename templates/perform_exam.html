@@ -11,6 +11,8 @@
         <input type="hidden" value="/exams/{{exam.exam_id}}" name="path" />
         <input type="hidden" value="{{exam.exam_id}}" name="exam_id" />
         <input type="hidden" value="{{total_points_received}}" name="total_score" />
+        <input type="hidden" value="{{answered_questions_count}}" name="questions_answered"/>
+        <input type="hidden" value="{{questions_count}}" name="questions_count"/>
         <input type="submit" class="btn btn-primary" value="Lähetä vastaukset ja lopeta koe">
         <input type="hidden" name="csrf_token" value="{{session.csrf_token}}">
     </form>
@@ -35,13 +37,13 @@
 <hr>
 {% else %}
     {% for question in exams_questions if question.question_id not in answered_question_ids %}
-        <p><b>Kysymys: </b> {{ question.question }}
+        <p><b>Kysymys:</b><a>&nbsp</a> {{ question.question }}
         <p>
             <form action="/exam/answer_question" method="POST">
                 <input type="hidden" value="/exams/{{exam.exam_id}}" name="path" />
                 <input type="hidden" value="{{exam.exam_id}}" name="exam_id" />
                 <input type="hidden" value="{{question.question_id}}" name="question_id" />
-                <b>Vastaus: </b><input type="text" name="answer"> <br> <br>
+                <b>Vastaus:</b><a>&nbsp</a> <input type="text" name="answer" placeholder="Pituus max 20 merkkiä" required> <br> <br>
                 <input type="submit" class="btn btn-primary" value="Vastaa"/>
                 <input type="hidden" name="csrf_token" value="{{session.csrf_token}}">
             </form>
