@@ -111,7 +111,7 @@
 
 {% block scripts %}
 <script>
-  $(document).ready = () => {
+  $(document).ready(function () {
     $('#student_data').DataTable({
       columns: [
         {searchable: false},
@@ -127,10 +127,10 @@
         {searchable: false}
       ],
   });
-};
+});
 </script>
 <script>
-  $(document).ready = () => {
+  $(document).ready(function () {
     $('#teacher_data').DataTable({
       columns: [
         null,
@@ -143,6 +143,6 @@
         {searchable: false}
       ],
     });
-  };
+  });
 </script>
 {% endblock %}

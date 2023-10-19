@@ -31,7 +31,7 @@
 
 {% block scripts %}
   <script>
-    $(document).ready = () => {
+    $(document).ready(function () {
       $('#data').DataTable({
         columns: [
           null,
@@ -42,6 +42,6 @@
           {searchable: false}
         ],
       });
-    };
+    });
   </script>
 {% endblock %}
