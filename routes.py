@@ -1,5 +1,5 @@
 from app import app
-from flask import render_template, request, redirect, flash, get_flashed_messages
+from flask import render_template, request, redirect, flash
 from datetime import datetime
 import users
 import subjects
@@ -118,7 +118,7 @@ def delete_user():
             return redirect("/")
         elif users.teacher_count() > 1 or (users.teacher_count() == 1 and role_to_delete == 'student'):
             users.delete_user(id_to_delete)
-            flash('Käyttäjätili poistettu', 'primary')
+            flash('Käyttäjätili poistettu', 'success')
             return redirect("/users")
         else:
             flash('Et voi poistaa ainutta opettajaa', 'warning')
@@ -166,7 +166,7 @@ def delete_subject():
     if users.user_id() and users.user_role() == 'teacher':
         id = request.form["id"]
         subjects.delete_subject(id)
-        flash('Aihealue poistettu', 'primary')
+        flash('Aihealue poistettu', 'success')
         return redirect("/subjects")
     else:
         return redirect("/")
@@ -213,7 +213,7 @@ def delete_question():
         path=request.form["path"]
         question_id=request.form["question_id"]
         questions.delete_question(question_id)
-        flash('Kysymys poistettu', 'primary')
+        flash('Kysymys poistettu', 'success')
         return redirect(path)
     else:
         redirect("/")
@@ -289,7 +289,7 @@ def delete_exam():
         path=request.form["path"]
         exam_id=request.form["exam_id"]
         exams.delete_exam(exam_id)
-        flash('Koe poistettu', 'primary')
+        flash('Koe poistettu', 'success')
         return redirect(path)
     else:
         redirect("/")
@@ -366,7 +366,7 @@ def remove_exam_question():
         exam_id=request.form["exam_id"]
         question_id=request.form["question_id"]
         exams.remove_question(exam_id, question_id)
-        flash('Kysymys poistettu kokeelta', 'primary')
+        flash('Kysymys poistettu kokeelta', 'success')
         return redirect(path)
     else:
         redirect("/")
@@ -400,7 +400,7 @@ def submit_exam():
         questions_answered = request.form["questions_answered"]
         if questions_count == questions_answered:
             exams.end_exam(user_id, exam_id, total_score, exam_finished)
-            flash('Koe päätetty', 'success')
+            flash('Koevastaukset lähetetty ja koe päätetty', 'success')
         else:
             flash('Et ole vastannut kaikkiin koekysymyksiin', 'warning')
         return redirect(path)
