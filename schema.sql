@@ -18,13 +18,13 @@ CREATE TABLE users (
 
 CREATE TABLE subjects (
     id SERIAL PRIMARY KEY,
-    name VARCHAR(30) UNIQUE NOT NULL CHECK(LENGTH(name) >= 5)
+    name VARCHAR(20) UNIQUE NOT NULL CHECK(LENGTH(name) >= 5)
 );
 
 CREATE TABLE questions (
     id SERIAL PRIMARY KEY,
     subject_id INTEGER REFERENCES subjects ON DELETE CASCADE,
-    question VARCHAR(200) UNIQUE NOT NULL,
+    question VARCHAR(300) UNIQUE NOT NULL,
     answer VARCHAR(20) NOT NULL,
     points INTEGER NOT NULL CHECK(points > -1 AND points < 11)
 );
