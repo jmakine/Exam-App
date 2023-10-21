@@ -5,43 +5,188 @@
 {% if session.user_id %}
     <h2>Etusivu</h2>
     {% if session.role == "student" %}
-        <p>Voit suorittaa eriaihealueen kokeita ja katsoa suorituksesi. </p>
-        <hr>
-        <p>
-            <form action="/users/delete" method="POST">
-                <input type="hidden" value="{{session.user_id}}" name="id_to_delete" />
-                <input type="hidden" value="student" name="role_to_delete" />
-                <a onclick="return confirm(`Haluatko varmasti poistaa käyttäjätilisi?`);">
-                <input type="submit" class="btn btn-danger" value="Poista käyttäjätili"/>
-                <input type="hidden" name="csrf_token" value="{{session.csrf_token}}">
-            </form>
-        </p>
+    <p> <b>Opiskelijana pystyt suorittamaan kokeita</b>
+        <ul>
+            <li>
+                kokeen suoritusaika alkaa painamalla "Aloita"
+                <ul>
+                    <li>
+                        jokaiseen kokeen kysymykseen tulee vastata kirjoittamalla vastaus ja painamalla "Vastaa"
+                    </li>
+                    <li>
+                        kun olet vastannut kaikkiin kysymyksiin, voit lopettaa kokeen painamalla "Lähetä vastaukset ja lopeta koe"
+                    </li>
+                </ul>
+            </li>
+            <li>
+                voit jättää suorituksen kesken siirtymällä "Etusivu" tai "Kokeet" -sivulle
+                <ul>
+                    <li>
+                        kokeen suoritusaika ei pysähdy jättämällä kokeen kesken
+                    </li>
+                    <li>
+                        voit jatkaa kokeen suoritusta painamalla "Jatka"
+                    </li>
+                </ul>
+            </li>
+            <li>
+                tarkastelemaan loppuun asti suoritettujen kokeiden tuloksia painamalla "Tulokset"
+            </li>
+            <li>
+                poistamaan oman käyttäjätilisi
+            </li>
+        </ul>
+    </p> <hr>
+
+    <p>
+        <form action="/users/delete" method="POST">
+            <input type="hidden" value="{{session.user_id}}" name="id_to_delete" />
+            <input type="hidden" value="student" name="role_to_delete" />
+            <a onclick="return confirm(`Haluatko varmasti poistaa käyttäjätilisi?`);">
+            <input type="submit" class="btn btn-danger" value="Poista käyttäjätili"/>
+            <input type="hidden" name="csrf_token" value="{{session.csrf_token}}">
+        </form>
+    </p>
     {% endif %}
 
-    {% if session.role == "teacher" %} 
-        <p>
-            <ul>
-                <li>
-                    <b>Aihealueet</b> -sivulla pystyt luomaan ja poistamaan aihealueta, kokeita ja kysymyksiä sekä lisäämään ja poistamaan kysymyksiä kokeilta.
-                </li>
-                <li>
-                    <b>Koetilastot</b> -sivulta näet yhteenvedot kaikista sovelluksen kokeista sekä tulostilastoja.
-                </li>
-                <li>
-                    <b>Käyttäjät</b> -sivulla pääset lisäämään ja poistamaan käyttäjiä.
-                </li>
-                <li>
-                    <b>Käyttäjätilastot</b> -sivulta näet käyttäjäkohtaiset suoritukset.
-                </li>
-            </ul>
-        </p>
+    {% if session.role == "teacher" %}
+    <p> <b>Opettajana pystyt</b>
+        <ul>
+            <li>
+                lisäämään ja poistamaan käyttäjiä 
+                <ul>
+                    <li>
+                        vain opettaja pystyy lisäämään ja poistamaan toisia opettajia
+                    </li>
+                    <li>
+                        viimeistä opettajaa ei pysty poistamaan, sillä tietokannassa on aina oltava vähintään yksi opettaja
+                    </li>
+                </ul>
+            </li>
+            <li>
+                lisäämään ja poistamaan aihealueta, kokeita ja kysymyksiä
+            </li>
+            <li>
+                lisäämään ja poistamaan kysymyksiä kokeilta
+            </li>
+            <li>
+                näkemään yhteenvetotaulukon kaikista sovelluksen kokeista sekä niiden tulostilastoja:
+                <ul>
+                    <li>
+                        kokeen nimi, aihealue, aikaraja, kysymysten lukumäärä ja maksimipistee
+                    </li>
+                    <li>
+                        suoritusten lukumäärä ja niiden tulosten keskiarvo
+                    </li>
+                    <li>
+                        keskeneräisten suoritusten lukumäärä
+                    </li>
+                </ul>
+            </li>
+            <li>
+                näkemään käyttäjäkohtaiset tilastot suorituksista:
+                <ul>
+                    <li>
+                        milloin koe on suoritettu, tai jos suoritus on kesken
+                    </li>
+                    <li>
+                        kokeeseen käytetty aika, joka näkyy punaisella, jos kokeen aikaraja on ylitetty
+                    </li>
+                    <li>
+                        kokeen maksimipisteet sekä opiskelijan pisteet
+                    </li>
+                </ul>
+            </li>
+        </ul>
+    </p>
     {% endif %}
 
 {% else %}
+    <p style="font-style: italic;">
+        Tämä sovellus on tehty Helsingin yliopiston Tietokannat ja web-ohjelmointi -kurssin harjoitustyönä syksyllä 2023.
+    </p>
+    <i>Sovellukseen ensimmäisenä tunnukset luova on automaattisesti opettaja. Tämän jälkeen tunnuksensa luovat ovat automaattisesti opiskelijoita, ja vain opettaja pystyy lisäämään muita opettajia.</i>
+    <hr>
+
     <p>
-        Sovelluksessa opettaja voi luoda kokeita ja opiskelija voi suorittaa niitä. <br>
-        <b>Kirjaudu sisään tai luo tunnus.</b>
+        <h4>Sovelluksen perusidea:</h4>
+        <h5>opettaja voi luoda kokeita ja opiskelija voi suorittaa niitä.</h5> <br>
+        Koekysymysten <b>vastausten on tarkoitus olla lyhyitä</b>, 1-20 merkkiä pitkiä, sillä vastaus lasketaan oikeaksi vain mikäli se täsmää oikeaksi määriteltyyn vastaukseen. <br>
+        <b>Kuitenkin poikkeuksena:</b>
+        <ul>
+            <li>ylimääräiset välilyönnit vastauksen edessä ja jälkeen eivät vaikuta tarkistukseen</li>
+            <li>isoilla ja pienillä kirjaimilla ei ole merkitystä</li>
+            <li>sillä, käyttääkö pilkkua vai pistettä vastauksessa ei ole merkitystä</li>
+        </ul>
+    </p>
+    <hr>
+
+    <p> <b>Opettajan roolissa pystyy:</b>
+        <ul>
+            <li>
+                lisäämään ja poistamaan käyttäjiä 
+                <ul>
+                    <li>
+                        vain opettaja pystyy lisäämään ja poistamaan toisia opettajia
+                    </li>
+                    <li>
+                        viimeistä opettajaa ei pysty poistamaan, sillä tietokannassa on aina oltava vähintään yksi opettaja
+                    </li>
+                </ul>
+            </li>
+            <li>
+                lisäämään ja poistamaan aihealueta, kokeita ja kysymyksiä
+            </li>
+            <li>
+                lisäämään ja poistamaan kysymyksiä kokeilta
+            </li>
+            <li>
+                näkemään yhteenvetotaulukon kaikista sovelluksen kokeista sekä niiden tulostilastoja:
+                <ul>
+                    <li>
+                        kokeen nimi, aihealue, aikaraja, kysymysten lukumäärä ja maksimipistee
+                    </li>
+                    <li>
+                        suoritusten lukumäärä ja niiden tulosten keskiarvo
+                    </li>
+                    <li>
+                        keskeneräisten suoritusten lukumäärä
+                    </li>
+                </ul>
+            </li>
+            <li>
+                näkemään käyttäjäkohtaiset tilastot suorituksista:
+                <ul>
+                    <li>
+                        milloin koe on suoritettu, tai jos suoritus on kesken
+                    </li>
+                    <li>
+                        kokeeseen käytetty aika, joka näkyy punaisella, jos kokeen aikaraja on ylitetty
+                    </li>
+                    <li>
+                        kokeen maksimipisteet sekä opiskelijan pisteet
+                    </li>
+                </ul>
+            </li>
+        </ul>
+    </p>
+    <p> <b>Opiskelijan roolissa pystyy:</b>
+        <ul>
+            <li>
+                suorittamaan kokeita
+            </li>
+            <li>
+                jatkamaan keskeneräistä koesuoritusta
+            </li>
+            <li>
+                tarkastelemaan loppuun asti suoritettujen kokeiden tulokset
+            </li>
+            <li>
+                poistamaan oman käyttäjätilinsä
+            </li>
+        </ul>
     </p>
 {% endif %}
+<hr>
 
 {% endblock %}
