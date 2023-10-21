@@ -8,12 +8,11 @@
 <div class="container">
 <h1>Koe sovellus</h1>
 {% if session.user_id %}
-    Kirjautunut 
-        {% if session.role == "teacher" %} opettaja: <i>{{ session.username }}</i> &nbsp;
-        {% else %} oppilas: <i>{{ session.username }}</i> &nbsp;
+    <i>Kirjautunut 
+        {% if session.role == "teacher" %} opettaja: {{ session.username }}</i>
+        {% else %} opiskelija: {{ session.username }}
         {% endif %}
-    <a>&nbsp;</a>
-    <a href="/logout">Kirjaudu ulos</a>
+    </i>
 
     <nav class="navbar navbar-expand-sm navbar-light">
         <a class="navbar-brand" href="/">Etusivu</a>
@@ -37,13 +36,27 @@
                 <a class="nav-link" href="/exams">Kokeet</a>
             </li>
         {% endif %}
+            <li class="nav-item">
+                <a class="nav-link"></a>
+            </li>
+            <li>
+                <a class="nav-link" style="color: red;" href="/logout">Kirjaudu ulos</a>
+            </li>
         </ul>
     </nav>
 
 {% else %}
-    <a href="/login">Kirjaudu sisään</a> 
-    <a>&nbsp;</a>
-    <a href="/register">Luo tunnus</a>
+    <nav class="navbar navbar-expand-sm navbar-light">
+        <a class="navbar-brand" href="/">Sovelluksesta</a>
+        <ul class="navbar-nav">
+            <li class="nav-item">
+                <a class="nav-link" href="/login">Kirjaudu</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/register">Luo tunnus</a>
+            </li>
+        </ul>
+    </nav>
 {% endif %}
 <hr>
 
@@ -51,8 +64,7 @@
     {% if messages %}
         {% for category, message in messages %}
         <div id="flash-messages" class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
-            <span>{{ message }}</span>
-            
+            <span>{{ message }}</span>            
         </div>
         {% endfor %}
     {% endif %}
