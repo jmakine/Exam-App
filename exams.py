@@ -90,11 +90,11 @@ def remove_question(exam_id, question_id):
 
 def get_exam_stats():
     try:
-        sql = "SELECT u.id as user_id, u.username, s.name as subject_name, e.id as exam_id, e.name as exam_name, exams_total_points.total_points as max_points, TO_CHAR(ue.exam_finished, 'YYYY/MM/DD HH24:MM:SS') as exam_finished, ue.total_score as points_received, ue.time_spent \
+        sql = "SELECT u.id as user_id, u.username, s.name as subject_name, e.id as exam_id, e.name as exam_name, e.time_limit_minutes as time_limit, exams_total_points.total_points as max_points, TO_CHAR(ue.exam_started, 'YYYY/MM/DD HH24:MM:SS') as exam_started, TO_CHAR(ue.exam_finished, 'YYYY/MM/DD HH24:MM:SS') as exam_finished, ue.total_score as points_received, ue.time_spent, (e.time_limit_minutes - (extract(epoch from (ue.exam_finished - ue.exam_started)) / 60)) as time_limit_exceeded \
             FROM users u LEFT JOIN users_exams ue ON ue.user_id=u.id \
                 LEFT JOIN exams e ON e.id=ue.exam_id \
                     INNER JOIN subjects s ON s.id=e.subject_id \
-                        LEFT JOIN (SELECT e.id as exam_id, SUM(q.points) as total_points \
+                        LEFT JOIN (SELECT e.id as exam_id, SUM(q.points) as total_points, e.time_limit_minutes \
                             FROM exams e LEFT JOIN exams_questions eq ON e.id=eq.exam_id \
                                 LEFT JOIN questions q ON q.id=eq.question_id GROUP BY e.id) as exams_total_points \
                                     ON exams_total_points.exam_id=e.id;"
@@ -161,7 +161,6 @@ def end_exam(user_id, exam_id, total_score, exam_finished):
     
         try:
             time_spent = get_time_spent(exam_id, user_id)
-            print('time_spent in exams.py end_exam: ', type(list(time_spent)), list(time_spent))
             time_spent = list(time_spent)
             sql_add_time_spent = "UPDATE users_exams \
                 SET time_spent=:time_spent \
@@ -172,4 +171,3 @@ def end_exam(user_id, exam_id, total_score, exam_finished):
             return False
     except:
         return False
-    
