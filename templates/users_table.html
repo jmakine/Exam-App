@@ -1,16 +1,18 @@
 {% extends "layout.html" %}
 {% block title %} Käyttäjätilastot {% endblock %}
 {% block content %}
-<h2>Opiskelijat</h2>
+<h2>Käyttäjätilastot</h2> <br>
 
 <table id="data" class="table table-striped">
     <thead>
         <tr>
             <th>Opiskelijan nimi</th>
             <th>Aihealue</th>
-            <th>Kokeen nimi</th>            
-            <th>Maksimipisteet</th>
+            <th>Kokeen nimi</th>
             <th>Suoritettu</th>
+            <th>Aikaraja</th>
+            <th>Käytetty aika</th>    
+            <th>Maksimipisteet</th>
             <th>Opiskelijan pisteet</th>
         </tr>
     </thead>
@@ -20,9 +22,21 @@
             <td>{{ user.username }}</td>
             <td>{{ user.subject_name }}</td>
             <td>{{ user.exam_name }}</td>
+            <td>{% if user.exam_finished==None %} Kesken 
+                {% else %} {{ user.exam_finished }} {% endif %}</td>
+            <td>{{ user.time_limit }} min</td>
+            <td>{% if user.exam_finished==None %} -
+                {% else %}
+                    {% if user.time_limit_exceeded < 0 %}
+                        <p style="color: red">{{ user.time_spent[0] }} min {{ user.time_spent[1] }} s</p>
+                    {% else %}
+                        <p style="color: black">{{ user.time_spent[0] }} min {{ user.time_spent[1] }} s</p>
+                    {% endif %}
+                {% endif %}
+            </td>
             <td>{{ user.max_points }}</td>
-            <td>{% if user.exam_finished==None %} Kesken {% else %} {{ user.exam_finished }} {% endif %}</td>
-            <td>{% if user.exam_finished==None %} - {% else %} {{ user.points_received }} {% endif %}</td>
+            <td>{% if user.exam_finished==None %} -
+                {% else %} {{ user.points_received }} {% endif %}</td>
         </tr>
         {% endfor %}
     </tbody>
@@ -30,18 +44,20 @@
 {% endblock %}
 
 {% block scripts %}
-  <script>
-    $(document).ready(function () {
-      $('#data').DataTable({
-        columns: [
-          null,
-          null,
-          null,
-          {searchable: false},
-          {searchable: false},
-          {searchable: false}
-        ],
-      });
+<script>
+  $(document).ready(function () {
+    $('#data').DataTable({
+      columns: [
+        null,
+        null,
+        null,
+        {searchable: false},
+        {searchable: false},
+        {searchable: false},
+        {searchable: false},
+        {searchable: false}
+      ],
     });
-  </script>
+  });
+</script>
 {% endblock %}
