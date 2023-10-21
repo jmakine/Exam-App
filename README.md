@@ -5,17 +5,14 @@ Sovelluksen käyttäjä on joko opettaja tai opiskelija. Sovelluksen avulla opet
 ## Sovelluksen ominaisuuksia: 
 *    Käyttäjä voi kirjautua sisään ja ulos sekä luoda uuden tunnuksen.
 *    Ensimmäinen rekisteröityjä on automaattisesti opettaja. Vain opettaja voi lisätä muita opettajia. Muut itse rekisteröityvät ovat automaattisesti opiskelijoita.
-*    Käyttäjä voi poistaa oman tilinsä. Opettaja voi poistaa myös muiden käyttäjien tilejä. Tietokannassa on aina oltava vähintään yksi opettaja, eli viimeistä opettajaa ei pysty poistamaan.
-*    Opiskelija näkee listan kokeista ja voi suorittaa kokeen. Jos koe on jo suoritettu, näkee hän saamansa koetuloksen, suoritukseen käyttämäänsä ajan, ja pystyy tarkastelemaan suorituksiaan.
+*    Sovelluksen etusivu näyttää kirjautumattomalle henkilölle sovelluksen perusidean ja muuta perustietoa. Opiskelijalle ja opettajalle etusivulla näkyy rooliin sopivat perustoiminnallisuudet.
+*    Opiskelija voi poistaa oman tilinsä. Opettaja voi poistaa myös muiden käyttäjien tilejä. Tietokannassa on aina oltava vähintään yksi opettaja, eli viimeistä opettajaa ei pysty poistamaan.
+*    Opiskelija näkee listan kokeista ja voi suorittaa kokeen. Jos koe on jo suoritettu, näkee hän saamansa koetuloksen, suoritukseen käyttämäänsä ajan, joka näkyy punaisella, jos aikaraja on ylitetty, ja pystyy tarkastelemaan suorituksiaan. Jos koe on jäänyt kesken, pystyy hän jatkamaan suoritusta.
 *    Opettaja pystyy lisäämään, poistamaan ja muokkaamaan kouluaineita, koetehtäviä ja kokeita.
+*    Opettaja luo uuden kokeen määrittäämällä kokeelle nimen sekä aikarajan, jonka jälkeen hän pystyy lisäämään kokeelle kysymyksiä.
 *    Yksittäinen koetehtävä sisältää kysymyksen, sekä tekstikentän, johon tulee kirjoittaa oikea vastaus. Opettaja määrittää kullekin kysymykselle siitä saatavat pisteet, mikäli vastaus on oikein.
-*    Opettaja näkee kokeista tilaston, kuinka moni on suorittanut kokeen sekä tulosten keskiarvon.
-
-### Lisäksi tehtävä vielä:
-*   Opettajan 'Käyttäjätilastot' -näkymään suoritukseen käytetty aika näkyviin. Nyt on vasta opiskelijalle näkyvässä suoritustilastossa.
-*   Ilmoitukset onnistuneista lisäyksistä ja poistoista puuttuu vielä kokonaan. Opettajalla tämä tarkoittaa uuden kokeen, käyttäjän, aihealueen tai kysymyksen poistamista tai lisäämistä. Opiskelijalla valmiin kokeen lähetystä.
-*   Sovelluksen ulkonäkö on yhä melko persoonaton, mutta parempaan päin. Otetaan bootstrapin alerts käyttöön ja korvataan sillä nykyiset virheilmoitukset.
-*   Koodin refaktorointia.
+*    Opettaja näkee kokeista tilaston, josta näkee kokeen perustiedot, sekä kuinka moni on suorittanut kokeen, näiden tulosten keskiarvon, sekä kuinka monta suoritusta on kesken.
+*    Opettaja näkee käyttäjäkohtaisen tilaston, josta näkee loppuun asti suoritetuista kokeista suoritusajankohdan, saadut pisteet sekä suoritukseen käytetyn ajan, joka näkyy punaisella, jos aikaraja on ylitetty. Tilastosta näkee myös tiedon siitä, jos suoritus on kesken.
 
 ## Sovelluksen käyttäminen:
 *   Kloonaa repositorio ja navigoi kloonattuun kansioon
@@ -30,5 +27,6 @@ Sovelluksen käyttäjä on joko opettaja tai opiskelija. Sovelluksen avulla opet
     1.  Aseta salainen avain (jotain satunnaisia merkkejä): 
         SECRET_KEY=abcdefghijklmnop (esimerkkinä, mutta älä käytä tätä)
 *   Luo schema.sql -tiedoston mukaiset tietokantataulut PostgreSQL -komentoikkunassa _(psql < schema.sql)_
+*   Halutessasi voit lisätä sovellukseen testidataa _(psql < test_data.sql)_, jossa on määritetty kaksi aihealuetta, näille molemmille yhdet kokeet, joissa molemmissa muutamia kysymyksiä. Yhtään käyttäjää ei testidata tietokantaan luo.
 *   Käynnistä sovellus Koe-sovellus komennolla: _flask run_
 *   Huom, ensimmäisen rekisteröimäsi käyttäjän rooli on automaattisesti 'opettaja'
