@@ -46,19 +46,23 @@
                 {% endfor %}</td>
             <td>{% for user in users_exams %} 
                     {% if user.exam_id == exam.exam_id and exam.exam_id in submitted_exam_ids %}
-                        <a href="/exams/{{exam.exam_id}}" class="btn btn-primary">Tulokset</a>
-                    {% endif %} 
+                        <a href="/exams/{{exam.exam_id}}"
+                        class="btn btn-primary">
+                        Tulokset</a>
+                    {% endif %}
                 {% endfor %}</td>
             <td>{% for user in users_exams %} 
                     {% if user.exam_id == exam.exam_id and exam.exam_id in started_exam_ids and exam.exam_id not in submitted_exam_ids %}
-                      <a href="/exams/{{exam.exam_id}}" class="btn btn-primary">Jatka</a>
+                        <a href="/exams/{{exam.exam_id}}"
+                        class="btn btn-primary">
+                        Jatka</a>
                     {% endif %}
                 {% endfor %}</td>
             <td>{% if exam.max_points != None and exam.exam_id not in started_exam_ids and exam.exam_id not in submitted_exam_ids %}
                     <a href="/exams/{{exam.exam_id}}"
-                      class="btn btn-primary"
-                      onclick="return confirm(`Haluatko varmasti aloittaa kokeen? Painamalla 'ok', kokeen suoritusaika alkaa.`);">
-                      Aloita</a>
+                    class="btn btn-primary"
+                    onclick="return confirm(`Haluatko varmasti aloittaa kokeen? Painamalla 'ok', kokeen suoritusaika alkaa.`);">
+                    Aloita</a>
                 {% endif %}</td>
         </tr>
         {% endfor %}
