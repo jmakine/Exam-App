@@ -15,6 +15,11 @@
 </nav>
 <hr>
 
+<h6><i style="color: red;">
+    Huomioithan, että kokeen poistaminen poistaa sen myös tilastoista.
+</i></h6>
+<hr>
+
 <h3>Luo uusi koe:</h3>
 <form action="/exams/add" method="POST">
     <input type="hidden" value="/subjects/{{subject.id}}/exams" name="path" />
@@ -40,7 +45,7 @@
         <input type="hidden" value="/subjects/{{exams[0].subject_id}}/exams" name="path">
         <input type="hidden" value="{{exam.exam_id}}" name="exam_id">
         <input type="submit" class="btn btn-danger" value="Poista" 
-            onclick="return confirm('Kokeen poistaminen poistaa sen myös kaikista tilastoista. Haluatko varmasti poistaa kokeen?');">
+            onclick="return confirm('Haluatko varmasti poistaa kokeen?');">
         <input type="hidden" name="csrf_token" value="{{session.csrf_token}}">
     </form>
 </p>

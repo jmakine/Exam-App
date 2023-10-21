@@ -4,6 +4,11 @@
 <h2>Aihealueet</h2>
 <hr>
 
+<h6><i style="color: red;">
+    Huomioithan, että aihealueen poistaminen poistaa sen myös kaikista tilastoista sekä siihen liittyvät kokeet ja kysymykset.
+</i></h6>
+<hr>
+
 <form action="/subjects/add" method="POST">
     <h3>Lisää aihealue:</h3>
     <input type="text" name="name" required placeholder="Pituus 5-30 merkkiä"> <br> <br>
@@ -19,7 +24,7 @@
 <p>
     <form action="/subjects/delete" method="POST">
         <input type="hidden" value="{{subject.id}}" name="id" />
-        <input type="submit" class="btn btn-danger" value="Poista" onclick="return confirm('Aihealueen poistaminen poistaa sen myös kaikista tilastoista sekä siihen liittyvät kokeet ja kysymykset. Haluatko varmasti poistaa aihealueen?');"/>
+        <input type="submit" class="btn btn-danger" value="Poista" onclick="return confirm('Haluatko varmasti poistaa aihealueen?');"/>
         <input type="hidden" name="csrf_token" value="{{session.csrf_token}}">
     </form>
 </p>
