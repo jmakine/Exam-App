@@ -1,17 +1,13 @@
 {% extends "layout.html" %}
-{% block title %} Luo tunnus {% endblock %}
+{% block title %} Rekisteröinti {% endblock %}
 {% block content %}
-<h2>Luo tunnus</h2> <br>
+<h2>Luo tunnus: </h2>
 <form action="/register" method="POST">
-    <b>Nimi:</b> <br>
-    <input type="text" name="username" required> <br> <br>
-    <b>Salasana:</b> <br>
-    <input type="password" name="password1" required> <br> <br>
-    <b>Salasana uudelleen:</b> <br>
-    <input type="password" name="password2" required> <br> <br>
+    <p style="width: 180px; display: inline-block;"> <b>Nimi:</b> </p> <input type="text" name="username" required placeholder="Pituus 4-20 merkkiä"> <br>
+    <p style="width: 180px; display: inline-block;"> <b>Salasana:</b> </p> <input type="password" name="password1" required placeholder="Pituus 8-20 merkkiä"> <br>
+    <p style="width: 180px; display: inline-block;"> <b>Salasana uudelleen:</b> </p> <input type="password" name="password2" required placeholder="Syötä sama salasana uudelleen"> <br>
     <input type="hidden" value="student" name="role" />
     <input type="submit" class="btn btn-primary" value="Luo tunnus">
     <input type="hidden" name="csrf_token" value="{{session.csrf_token}}">
-</form>
-<br>
+</form> <br>
 {% endblock %}
