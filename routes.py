@@ -75,8 +75,8 @@ def get_users():
 @app.route("/users_table")
 def get_exam_stats():
     if users.user_id() and users.user_role() == 'teacher':
-        stats_by_user = exams.get_exam_stats()
-        return render_template("users_table.html", stats=stats_by_user)
+        exam_stats = exams.get_exam_stats()
+        return render_template("users_table.html", stats=exam_stats)
     else: 
         return redirect("/")
 
@@ -151,8 +151,8 @@ def add_subject():
             flash('Tämän niminen aihealue on jo olemassa', 'warning')
         elif len(name) < 5:
             flash('Aihealueen on oltava vähintään 5 merkkiä pitkä', 'warning')
-        elif len(name) > 30:
-            flash('Aihealue saa olla enintään 30 merkkiä pitkä', 'warning')
+        elif len(name) > 20:
+            flash('Aihealue saa olla enintään 20 merkkiä pitkä', 'warning')
         else:
             subjects.add_subject(name)
             flash('Aihealue lisätty', 'success')
@@ -191,8 +191,8 @@ def add_question():
         points=request.form["points"]
         if questions.get_question_id(question) != None:
             flash('Tämän niminen kysymys on jo olemassa', 'warning')
-        elif len(question) > 200:
-            flash('Kysymys saa olla enintään 200 merkkiä pitkä', 'warning')
+        elif len(question) > 300:
+            flash('Kysymys saa olla enintään 300 merkkiä pitkä', 'warning')
         elif len(answer) > 20:
             flash('Vastaus saa olla enintään 20 merkkiä pitkä', 'warning')
         elif int(points) < 0:
