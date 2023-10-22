@@ -10,7 +10,6 @@
 <table id="student_data" class="table table-striped">
     <thead>
         <tr>
-            <th hidden></th>
             <th>Aihealue</th>
             <th>Kokeen nimi</th>
             <th>Kysymyksiä</th>
@@ -26,14 +25,17 @@
     <tbody>
         {% for exam in exams_stats %}
         <tr>
-            <td hidden id="time_limit">{{exam.time_limit_minutes}}</td>
             <td>{{ exam.subject_name }}</td>
             <td>{{ exam.exam_name }}</td>
             <td>{{ exam.total_questions }} kpl</td>
             <td>{{ exam.time_limit_minutes }} min</td>
             <td>{% for user in users_exams %}
                     {% if user.exam_id == exam.exam_id and exam.exam_id in submitted_exam_ids %}
-                        <p id="time_spent" style="color: black">{{ user.time_spent[0] }} min {{ user.time_spent[1] }} s</p>
+                        {% if user.time_spent[0] > exam.time_limit_minutes or (user.time_spent[0] == exam.time_limit_minutes and user.time_spent[2] > 0) %}    
+                            <p style="color: red">{{ user.time_spent[0] }} min {{ user.time_spent[1] }} s</p>
+                        {% else %}
+                            <p>{{ user.time_spent[0] }} min {{ user.time_spent[1] }} s</p>
+                        {% endif %}
                     {% endif %}
                 {% endfor %}</td>
             <td>{% if exam.max_points == None %} -
@@ -69,15 +71,6 @@
     </tbody>
 </table>
 
-<script>
-    const time_limit_min = parseInt(document.getElementById("time_limit").innerHTML)
-    const time_spent = document.getElementById("time_spent").innerHTML.split(' ')
-    const time_spent_min = parseInt(time_spent[0])
-    const time_spent_s = parseInt(time_spent[2])
-    if(time_spent_min > time_limit_min || (time_limit_min == time_spent_min && time_spent_s > 0)) {
-        document.getElementById("time_spent").style.color = "red"
-    }
-</script>
 {% endif %}
 
 {% if session.role == "teacher" %}
@@ -103,7 +96,7 @@
             <td>{{ exam.time_limit_minutes }} min</td>
             <td>{% if exam.max_points == None %} -
                 {% else %} {{ exam.max_points }} {% endif %}</td>
-            <td>{% if exam.submitted == None %} -
+            <td>{% if exam.submitted == None or exam.submitted == 0 %} -
                 {% else %} {{ exam.submitted }} {% endif %}</td>
             <td>{% if exam.average_score == None %} -
                 {% else %} {{ exam.average_score }} {% endif %}</td>
@@ -122,7 +115,6 @@
   $(document).ready(function () {
     $('#student_data').DataTable({
       columns: [
-        {searchable: false},
         null,
         null,
         {searchable: false},
