@@ -22,7 +22,7 @@
             <td>{{ user.username }}</td>
             <td>{{ user.subject_name }}</td>
             <td>{{ user.exam_name }}</td>
-            <td>{% if user.exam_finished==None %} Kesken 
+            <td>{% if user.exam_finished==None %} <p style="color: red">Kesken</p>
                 {% else %} {{ user.exam_finished }} {% endif %}</td>
             <td>{{ user.time_limit }} min</td>
             <td>{% if user.exam_finished==None %} -
